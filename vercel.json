@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/__/auth/:path*",
+      "destination": "https://pasteldiary-61e12.firebaseapp.com/__/auth/:path*"
+    }
+  ]
+}

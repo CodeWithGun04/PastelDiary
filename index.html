@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,9 @@
     <div class="background-shape shape-one"></div>
     <div class="background-shape shape-two"></div>
 
+
     <!-- SETUP SCREEN -->
+
     <section id="setupScreen" class="setup-screen">
 
         <div class="setup-card">
@@ -27,25 +30,35 @@
 
             <div class="setup-form">
 
-                <label>Your name</label>
+                <label for="userName">Your name</label>
+
                 <input
                     type="text"
                     id="userName"
                     placeholder="what should I call you?"
                 >
 
-                <label>Your diary's name</label>
+                <label for="diaryName">Your diary's name</label>
+
                 <input
                     type="text"
                     id="diaryName"
                     placeholder="give your diary a cute name"
                 >
 
-                <button id="startButton" class="primary-button">
+                <button
+                    id="startButton"
+                    class="primary-button"
+                    type="button"
+                >
                     start my diary ✨
                 </button>
 
-                <button id="skipButton" class="secondary-button">
+                <button
+                    id="skipButton"
+                    class="secondary-button"
+                    type="button"
+                >
                     just go in
                 </button>
 
@@ -57,17 +70,30 @@
 
 
     <!-- MAIN APP -->
+
     <main id="diaryApp" class="app hidden">
 
         <!-- HEADER -->
+
         <header class="topbar">
 
             <div>
-                <p class="small-label">welcome back ♡</p>
-                <h1 id="welcomeText">pastel diary</h1>
+
+                <p class="small-label">
+                    welcome back ♡
+                </p>
+
+                <h1 id="welcomeText">
+                    pastel diary
+                </h1>
+
             </div>
 
-            <button id="resetButton" class="reset-button">
+            <button
+                id="resetButton"
+                class="reset-button"
+                type="button"
+            >
                 start over
             </button>
 
@@ -75,16 +101,29 @@
 
 
         <!-- QUICK DASHBOARD -->
+
         <section class="dashboard">
 
             <div class="dashboard-card weather-card">
 
-                <div class="card-icon">☁️</div>
+                <div class="card-icon">
+                    ☁️
+                </div>
 
                 <div>
-                    <p class="small-label">today</p>
-                    <h2 id="weatherTemperature">--°</h2>
-                    <p id="weatherText">weather will appear here</p>
+
+                    <p class="small-label">
+                        today
+                    </p>
+
+                    <h2 id="weatherTemperature">
+                        --°
+                    </h2>
+
+                    <p id="weatherText">
+                        weather will appear here
+                    </p>
+
                 </div>
 
             </div>
@@ -92,12 +131,24 @@
 
             <div class="dashboard-card mood-summary">
 
-                <div class="card-icon">🌷</div>
+                <div class="card-icon">
+                    🌷
+                </div>
 
                 <div>
-                    <p class="small-label">current mood</p>
-                    <h2 id="currentMood">not selected</h2>
-                    <p id="moodMessage">how are you feeling today?</p>
+
+                    <p class="small-label">
+                        current mood
+                    </p>
+
+                    <h2 id="currentMood">
+                        not selected
+                    </h2>
+
+                    <p id="moodMessage">
+                        how are you feeling today?
+                    </p>
+
                 </div>
 
             </div>
@@ -105,12 +156,24 @@
 
             <div class="dashboard-card streak-card">
 
-                <div class="card-icon">🔥</div>
+                <div class="card-icon">
+                    🔥
+                </div>
 
                 <div>
-                    <p class="small-label">your streak</p>
-                    <h2><span id="streak">0</span> days</h2>
-                    <p>keep showing up for yourself</p>
+
+                    <p class="small-label">
+                        your streak
+                    </p>
+
+                    <h2>
+                        <span id="streak">0</span> days
+                    </h2>
+
+                    <p>
+                        keep showing up for yourself
+                    </p>
+
                 </div>
 
             </div>
@@ -119,6 +182,7 @@
 
 
         <!-- WRITE ENTRY -->
+
         <section class="main-grid">
 
             <div class="card write-card">
@@ -126,57 +190,101 @@
                 <div class="section-heading">
 
                     <div>
-                        <p class="small-label">today's page</p>
-                        <h2>How are you feeling?</h2>
+
+                        <p class="small-label">
+                            today's page
+                        </p>
+
+                        <h2>
+                            How are you feeling?
+                        </h2>
+
                     </div>
 
-                    <input type="date" id="entryDate">
+                    <input
+                        type="date"
+                        id="entryDate"
+                    >
 
                 </div>
 
 
                 <div class="mood-section">
 
-                    <p class="label">pick a mood</p>
+                    <p class="label">
+                        pick a mood
+                    </p>
 
                     <div class="mood-grid">
 
-                        <button class="mood" data-mood="happy">
+                        <button
+                            class="mood"
+                            data-mood="happy"
+                            type="button"
+                        >
                             <span>😊</span>
                             happy
                         </button>
 
-                        <button class="mood" data-mood="calm">
+                        <button
+                            class="mood"
+                            data-mood="calm"
+                            type="button"
+                        >
                             <span>😌</span>
                             calm
                         </button>
 
-                        <button class="mood" data-mood="excited">
+                        <button
+                            class="mood"
+                            data-mood="excited"
+                            type="button"
+                        >
                             <span>🤭</span>
                             excited
                         </button>
 
-                        <button class="mood" data-mood="sad">
+                        <button
+                            class="mood"
+                            data-mood="sad"
+                            type="button"
+                        >
                             <span>🥺</span>
                             sad
                         </button>
 
-                        <button class="mood" data-mood="angry">
+                        <button
+                            class="mood"
+                            data-mood="angry"
+                            type="button"
+                        >
                             <span>😤</span>
                             angry
                         </button>
 
-                        <button class="mood" data-mood="tired">
+                        <button
+                            class="mood"
+                            data-mood="tired"
+                            type="button"
+                        >
                             <span>😴</span>
                             tired
                         </button>
 
-                        <button class="mood" data-mood="anxious">
+                        <button
+                            class="mood"
+                            data-mood="anxious"
+                            type="button"
+                        >
                             <span>🫠</span>
                             anxious
                         </button>
 
-                        <button class="mood" data-mood="loved">
+                        <button
+                            class="mood"
+                            data-mood="loved"
+                            type="button"
+                        >
                             <span>💗</span>
                             loved
                         </button>
@@ -186,7 +294,9 @@
                 </div>
 
 
-                <label class="label">entry title</label>
+                <label class="label" for="entryTitle">
+                    entry title
+                </label>
 
                 <input
                     type="text"
@@ -196,7 +306,9 @@
                 >
 
 
-                <label class="label">your thoughts</label>
+                <label class="label" for="entryContent">
+                    your thoughts
+                </label>
 
                 <textarea
                     id="entryContent"
@@ -206,9 +318,15 @@
 
                 <div class="write-footer">
 
-                    <span id="characterCount">0 characters</span>
+                    <span id="characterCount">
+                        0 characters
+                    </span>
 
-                    <button id="saveButton" class="primary-button">
+                    <button
+                        id="saveButton"
+                        class="primary-button"
+                        type="button"
+                    >
                         save entry ♡
                     </button>
 
@@ -218,30 +336,45 @@
 
 
             <!-- AI REFLECTION -->
+
             <aside class="card reflection-card">
 
                 <div class="ai-header">
 
-                    <div class="ai-icon">✦</div>
+                    <div class="ai-icon">
+                        ✦
+                    </div>
 
                     <div>
-                        <p class="small-label">your little reflection</p>
-                        <h2>what i noticed</h2>
+
+                        <p class="small-label">
+                            your little reflection
+                        </p>
+
+                        <h2>
+                            what i noticed
+                        </h2>
+
                     </div>
 
                 </div>
 
 
-                <div id="reflectionText" class="reflection-content">
-
+                <div
+                    id="reflectionText"
+                    class="reflection-content"
+                >
                     Write something in your diary and
                     I'll help you notice little patterns
                     in your thoughts.
-
                 </div>
 
 
-                <button id="reflectButton" class="secondary-button">
+                <button
+                    id="reflectButton"
+                    class="secondary-button"
+                    type="button"
+                >
                     ↻ reflect
                 </button>
 
@@ -255,6 +388,7 @@
 
 
         <!-- ANALYTICS -->
+
         <section class="analytics-grid">
 
             <div class="card stats-card">
@@ -262,11 +396,20 @@
                 <div class="section-heading">
 
                     <div>
-                        <p class="small-label">your diary</p>
-                        <h2>little stats</h2>
+
+                        <p class="small-label">
+                            your diary
+                        </p>
+
+                        <h2>
+                            little stats
+                        </h2>
+
                     </div>
 
-                    <span class="sparkle">✦</span>
+                    <span class="sparkle">
+                        ✦
+                    </span>
 
                 </div>
 
@@ -274,18 +417,41 @@
                 <div class="stats">
 
                     <div class="stat">
-                        <strong id="entryCount">0</strong>
-                        <span>entries</span>
+
+                        <strong id="entryCount">
+                            0
+                        </strong>
+
+                        <span>
+                            entries
+                        </span>
+
                     </div>
 
-                    <div class="stat">
-                        <strong id="happyCount">0</strong>
-                        <span>happy days</span>
-                    </div>
 
                     <div class="stat">
-                        <strong id="totalCharacters">0</strong>
-                        <span>words written</span>
+
+                        <strong id="happyCount">
+                            0
+                        </strong>
+
+                        <span>
+                            happy days
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong id="totalCharacters">
+                            0
+                        </strong>
+
+                        <span>
+                            characters
+                        </span>
+
                     </div>
 
                 </div>
@@ -298,13 +464,23 @@
                 <div class="section-heading">
 
                     <div>
-                        <p class="small-label">last 7 entries</p>
-                        <h2>mood garden</h2>
+
+                        <p class="small-label">
+                            last 7 entries
+                        </p>
+
+                        <h2>
+                            mood garden
+                        </h2>
+
                     </div>
 
                 </div>
 
-                <div id="moodGraph" class="mood-graph"></div>
+                <div
+                    id="moodGraph"
+                    class="mood-graph"
+                ></div>
 
             </div>
 
@@ -312,13 +488,21 @@
 
 
         <!-- SEARCH -->
+
         <section class="card entries-card">
 
             <div class="entries-header">
 
                 <div>
-                    <p class="small-label">your memories</p>
-                    <h2>past entries</h2>
+
+                    <p class="small-label">
+                        your memories
+                    </p>
+
+                    <h2>
+                        past entries
+                    </h2>
+
                 </div>
 
                 <input
@@ -330,11 +514,21 @@
             </div>
 
 
-            <div id="entriesList" class="entries-list">
+            <div
+                id="entriesList"
+                class="entries-list"
+            >
 
                 <div class="empty-state">
-                    <span>🌸</span>
-                    <p>Your diary is waiting for its first little story.</p>
+
+                    <span>
+                        🌸
+                    </span>
+
+                    <p>
+                        Your diary is waiting for its first little story.
+                    </p>
+
                 </div>
 
             </div>
@@ -352,4 +546,5 @@
     <script src="script.js"></script>
 
 </body>
+
 </html>

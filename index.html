@@ -1,550 +1,676 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>pastel diary · by Gun</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="stylesheet" href="style.css">
+        body {
+            background: linear-gradient(145deg, #fff0f7 0%, #e6f0fa 50%, #f3e8ff 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .setup-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            border-radius: 56px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 220, 240, 0.6);
+        }
+
+        .setup-card h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #b388b0;
+            margin-bottom: 0.5rem;
+        }
+
+        .setup-card p {
+            color: #b8a9c2;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .setup-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #f0d5e5;
+            border-radius: 48px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            background: white;
+            text-align: center;
+        }
+
+        .btn-pastel {
+            background: #e6d5f0;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 48px;
+            font-weight: 500;
+            color: #7a5a8a;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .diary-container {
+            display: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            background: linear-gradient(135deg, #eba0c1, #9bc4e8, #c3a0e0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .sub {
+            color: #b8a9c2;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(8px);
+            border-radius: 48px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(255, 235, 245, 0.8);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #f0dbeb;
+            border-radius: 36px;
+            font-family: inherit;
+            background: white;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        textarea {
+            min-height: 200px;
+            max-height: 500px;
+            resize: vertical;
+            border-radius: 32px;
+            line-height: 1.6;
+            overflow-y: auto;
+        }
+
+        input[type="date"] {
+            color: #7a5a8a;
+            cursor: pointer;
+        }
+
+        .date-hint {
+            font-size: 0.7rem;
+            color: #c2abc9;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+            text-align: right;
+        }
+
+        .mood-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .mood {
+            background: white;
+            border: 1px solid #f3d5e5;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #a188a8;
+            transition: 0.1s;
+        }
+
+        .mood.selected {
+            background: #ecd9f5;
+            border-color: #c8a8dc;
+            color: #7a4e8a;
+        }
+
+        button.primary {
+            background: #e7d4f0;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 48px;
+            font-weight: 500;
+            color: #6e4e7e;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .stat-card {
+            background: white;
+            flex: 1;
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 48px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #c68eb8;
+        }
+
+        .graph-container {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+        }
+        .graph-title {
+            font-size: 0.7rem;
+            color: #b89bc4;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 12px;
+            min-height: 160px;
+            padding: 8px 0;
+        }
+        .bar-item {
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .bar {
+            width: 100%;
+            max-width: 50px;
+            background: linear-gradient(180deg, #e8c4e0, #c8a8dc);
+            border-radius: 20px 20px 12px 12px;
+            transition: height 0.3s ease;
+            min-height: 8px;
+        }
+        .bar-label {
+            font-size: 0.65rem;
+            color: #b8a9c2;
+        }
+        .bar-emoji {
+            font-size: 0.85rem;
+        }
+        .no-graph {
+            text-align: center;
+            color: #c2abc9;
+            padding: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .response-box {
+            background: #fff7fc;
+            border-radius: 36px;
+            padding: 1.2rem;
+            margin: 0.8rem 0;
+            line-height: 1.6;
+            color: #5e4a6e;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            border-left: 6px solid #debfef;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .entry-item {
+            background: white;
+            border-radius: 32px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            border-left: 6px solid #e6ccec;
+        }
+
+        .entry-content-preview {
+            font-size: 0.85rem;
+            color: #6b5a4e;
+            max-height: 80px;
+            overflow-y: hidden;
+        }
+
+        .delete-btn {
+            float: right;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #cfbbd4;
+            font-size: 1rem;
+        }
+
+        .reset-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .reset-link button {
+            background: none;
+            border: none;
+            color: #c2abc9;
+            font-size: 0.7rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #cabed3;
+            margin-top: 2rem;
+        }
+    </style>
 </head>
-
 <body>
+<div class="container">
+    <div id="setupView" class="setup-card">
+        <h2>🫧 welcome</h2>
+        <p>a soft place to write what's in your heart</p>
+        <input type="text" id="userName" class="setup-input" placeholder="your name (e.g., Gun, Sara, Jacob)" autocomplete="off">
+        <input type="text" id="diaryNick" class="setup-input" placeholder="diary name (e.g., Unheard Tales)" autocomplete="off">
+        <div>
+            <button id="startDiaryBtn" class="btn-pastel">🌸 start</button>
+            <button id="guestStartBtn" class="btn-pastel">just go in</button>
+        </div>
+        <p style="margin-top: 1.5rem; font-size: 0.7rem; color:#c2abc9;">💫 made by Gun</p>
+    </div>
 
-    <div class="background-shape shape-one"></div>
-    <div class="background-shape shape-two"></div>
-
-
-    <!-- SETUP SCREEN -->
-
-    <section id="setupScreen" class="setup-screen">
-
-        <div class="setup-card">
-
-            <div class="logo">pastel diary</div>
-
-            <p class="subtitle">
-                a little space for your thoughts ♡
-            </p>
-
-            <div class="setup-form">
-
-                <label for="userName">Your name</label>
-
-                <input
-                    type="text"
-                    id="userName"
-                    placeholder="what should I call you?"
-                >
-
-                <label for="diaryName">Your diary's name</label>
-
-                <input
-                    type="text"
-                    id="diaryName"
-                    placeholder="give your diary a cute name"
-                >
-
-                <button
-                    id="startButton"
-                    class="primary-button"
-                    type="button"
-                >
-                    start my diary ✨
-                </button>
-
-                <button
-                    id="skipButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    just go in
-                </button>
-
-            </div>
-
+    <div id="diaryView" class="diary-container">
+        <div class="header">
+            <h1 id="mainTitle">🕯️ quiet corner</h1>
+            <div class="sub" id="mainSub">a pastel place to write</div>
         </div>
 
-    </section>
-
-
-    <!-- MAIN APP -->
-
-    <main id="diaryApp" class="app hidden">
-
-        <!-- HEADER -->
-
-        <header class="topbar">
-
-            <div>
-
-                <p class="small-label">
-                    welcome back ♡
-                </p>
-
-                <h1 id="welcomeText">
-                    pastel diary
-                </h1>
-
+        <div class="card">
+            <input type="date" id="entryDate" />
+            <div class="date-hint">📅 today's date by default · you can change it</div>
+            <div class="mood-group" id="moodGroup">
+                <span class="mood" data-mood="🌸 soft">🌸 soft</span>
+                <span class="mood" data-mood="💔 heavy">💔 heavy</span>
+                <span class="mood" data-mood="😔 sad">😔 sad</span>
+                <span class="mood" data-mood="🫂 lonely">🫂 lonely</span>
+                <span class="mood" data-mood="🌀 anxious">🌀 anxious</span>
+                <span class="mood" data-mood="🌙 tired">🌙 tired</span>
+                <span class="mood" data-mood="😤 angry">😤 angry</span>
+                <span class="mood" data-mood="💖 hopeful">💖 hopeful</span>
             </div>
+            <input type="text" id="entryTitle" placeholder="a little title..." />
+            <textarea id="entryText" rows="8" placeholder="pour your heart out. this space is yours. 💛"></textarea>
+            <button class="primary" id="saveEntryBtn">✍️ save</button>
+        </div>
 
-            <button
-                id="resetButton"
-                class="reset-button"
-                type="button"
-            >
-                start over
-            </button>
-
-        </header>
-
-
-        <!-- QUICK DASHBOARD -->
-
-        <section class="dashboard">
-
-            <div class="dashboard-card weather-card">
-
-                <div class="card-icon">
-                    ☁️
-                </div>
-
-                <div>
-
-                    <p class="small-label">
-                        today
-                    </p>
-
-                    <h2 id="weatherTemperature">
-                        --°
-                    </h2>
-
-                    <p id="weatherText">
-                        weather will appear here
-                    </p>
-
-                </div>
-
+        <div class="card">
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-number" id="statEntries">0</div><div>entries</div></div>
+                <div class="stat-card"><div class="stat-number" id="statStreak">0</div><div>streak</div></div>
             </div>
-
-
-            <div class="dashboard-card mood-summary">
-
-                <div class="card-icon">
-                    🌷
+            
+            <div class="graph-container">
+                <div class="graph-title">🎨 last 7 days · how you've been feeling</div>
+                <div id="moodGraphContainer">
+                    <div class="no-graph">📝 write entries to see your mood graph</div>
                 </div>
-
-                <div>
-
-                    <p class="small-label">
-                        current mood
-                    </p>
-
-                    <h2 id="currentMood">
-                        not selected
-                    </h2>
-
-                    <p id="moodMessage">
-                        how are you feeling today?
-                    </p>
-
-                </div>
-
             </div>
+        </div>
 
-
-            <div class="dashboard-card streak-card">
-
-                <div class="card-icon">
-                    🔥
-                </div>
-
-                <div>
-
-                    <p class="small-label">
-                        your streak
-                    </p>
-
-                    <h2>
-                        <span id="streak">0</span> days
-                    </h2>
-
-                    <p>
-                        keep showing up for yourself
-                    </p>
-
-                </div>
-
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color:#b47d9e;">🧠 what i noticed</span>
+                <button id="refreshResponseBtn" style="background:none; border:1px solid #e3cbec; padding:4px 12px; border-radius:50px; cursor:pointer;">↻ reflect</button>
             </div>
-
-        </section>
-
-
-        <!-- WRITE ENTRY -->
-
-        <section class="main-grid">
-
-            <div class="card write-card">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <p class="small-label">
-                            today's page
-                        </p>
-
-                        <h2>
-                            How are you feeling?
-                        </h2>
-
-                    </div>
-
-                    <input
-                        type="date"
-                        id="entryDate"
-                    >
-
-                </div>
-
-
-                <div class="mood-section">
-
-                    <p class="label">
-                        pick a mood
-                    </p>
-
-                    <div class="mood-grid">
-
-                        <button
-                            class="mood"
-                            data-mood="happy"
-                            type="button"
-                        >
-                            <span>😊</span>
-                            happy
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="calm"
-                            type="button"
-                        >
-                            <span>😌</span>
-                            calm
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="excited"
-                            type="button"
-                        >
-                            <span>🤭</span>
-                            excited
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="sad"
-                            type="button"
-                        >
-                            <span>🥺</span>
-                            sad
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="angry"
-                            type="button"
-                        >
-                            <span>😤</span>
-                            angry
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="tired"
-                            type="button"
-                        >
-                            <span>😴</span>
-                            tired
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="anxious"
-                            type="button"
-                        >
-                            <span>🫠</span>
-                            anxious
-                        </button>
-
-                        <button
-                            class="mood"
-                            data-mood="loved"
-                            type="button"
-                        >
-                            <span>💗</span>
-                            loved
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <label class="label" for="entryTitle">
-                    entry title
-                </label>
-
-                <input
-                    type="text"
-                    id="entryTitle"
-                    class="text-input"
-                    placeholder="give today a little title..."
-                >
-
-
-                <label class="label" for="entryContent">
-                    your thoughts
-                </label>
-
-                <textarea
-                    id="entryContent"
-                    placeholder="write whatever is on your mind..."
-                ></textarea>
-
-
-                <div class="write-footer">
-
-                    <span id="characterCount">
-                        0 characters
-                    </span>
-
-                    <button
-                        id="saveButton"
-                        class="primary-button"
-                        type="button"
-                    >
-                        save entry ♡
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- AI REFLECTION -->
-
-            <aside class="card reflection-card">
-
-                <div class="ai-header">
-
-                    <div class="ai-icon">
-                        ✦
-                    </div>
-
-                    <div>
-
-                        <p class="small-label">
-                            your little reflection
-                        </p>
-
-                        <h2>
-                            what i noticed
-                        </h2>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="reflectionText"
-                    class="reflection-content"
-                >
-                    Write something in your diary and
-                    I'll help you notice little patterns
-                    in your thoughts.
-                </div>
-
-
-                <button
-                    id="reflectButton"
-                    class="secondary-button"
-                    type="button"
-                >
-                    ↻ reflect
-                </button>
-
-                <p class="api-note">
-                    ✦ AI-powered reflections coming soon
-                </p>
-
-            </aside>
-
-        </section>
-
-
-        <!-- ANALYTICS -->
-
-        <section class="analytics-grid">
-
-            <div class="card stats-card">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <p class="small-label">
-                            your diary
-                        </p>
-
-                        <h2>
-                            little stats
-                        </h2>
-
-                    </div>
-
-                    <span class="sparkle">
-                        ✦
-                    </span>
-
-                </div>
-
-
-                <div class="stats">
-
-                    <div class="stat">
-
-                        <strong id="entryCount">
-                            0
-                        </strong>
-
-                        <span>
-                            entries
-                        </span>
-
-                    </div>
-
-
-                    <div class="stat">
-
-                        <strong id="happyCount">
-                            0
-                        </strong>
-
-                        <span>
-                            happy days
-                        </span>
-
-                    </div>
-
-
-                    <div class="stat">
-
-                        <strong id="totalCharacters">
-                            0
-                        </strong>
-
-                        <span>
-                            characters
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="card graph-card">
-
-                <div class="section-heading">
-
-                    <div>
-
-                        <p class="small-label">
-                            last 7 entries
-                        </p>
-
-                        <h2>
-                            mood garden
-                        </h2>
-
-                    </div>
-
-                </div>
-
-                <div
-                    id="moodGraph"
-                    class="mood-graph"
-                ></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- SEARCH -->
-
-        <section class="card entries-card">
-
-            <div class="entries-header">
-
-                <div>
-
-                    <p class="small-label">
-                        your memories
-                    </p>
-
-                    <h2>
-                        past entries
-                    </h2>
-
-                </div>
-
-                <input
-                    type="search"
-                    id="searchInput"
-                    placeholder="search entries..."
-                >
-
-            </div>
-
-
-            <div
-                id="entriesList"
-                class="entries-list"
-            >
-
-                <div class="empty-state">
-
-                    <span>
-                        🌸
-                    </span>
-
-                    <p>
-                        Your diary is waiting for its first little story.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <footer>
-            pastel · pink · pearl · lavender · your little corner of the internet ♡
-        </footer>
-
-    </main>
-
-
-    <script src="script.js"></script>
-
+            <div class="response-box" id="responseBox">✨ write something — I'll read it carefully.</div>
+        </div>
+
+        <div class="card">
+            <span style="color:#b47d9e;">📒 your pages</span>
+            <div id="entriesFeed" style="margin-top: 12px;">— nothing yet. —</div>
+        </div>
+
+        <div class="reset-link"><button id="resetAllBtn">↺ start over</button></div>
+        <div class="footer">pastel · pink · pearl · lavender · your words stay here</div>
+    </div>
+</div>
+
+<script>
+    let diaryEntries = [];
+    let currentUser = "";
+    let currentDiaryName = "";
+    let lastResponse = "";
+
+    function setTodaysDate() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayString = `${year}-${month}-${day}`;
+        const dateInput = document.getElementById('entryDate');
+        if (dateInput) {
+            dateInput.value = todayString;
+        }
+    }
+
+    function getMoodValue(moodStr) {
+        const map = {
+            '🌸 soft': 5, '💖 hopeful': 4, '💔 heavy': 2, '😔 sad': 2,
+            '🫂 lonely': 1.5, '🌀 anxious': 2.5, '🌙 tired': 2, '😤 angry': 2.8
+        };
+        return map[moodStr] || 3;
+    }
+
+    function getSmartResponse(text, userName, allEntries) {
+        const lower = text.toLowerCase();
+        const name = userName || "you";
+        
+        let emotion = null;
+        
+        if (lower.includes('hopeless') || lower.includes('worthless') || lower.includes('numb') || lower.includes('nothing matters') || lower.includes('give up') || lower.includes('no point') || lower.includes('want to die') || lower.includes('end it')) {
+            emotion = "hopeless";
+        }
+        else if (lower.includes('lonely') || lower.includes('alone') || lower.includes('akela') || lower.includes('nobody') || lower.includes('no one') || lower.includes('by myself') || lower.includes('isolated') || lower.includes('abandoned') || lower.includes('left out') || lower.includes('unseen') || lower.includes('invisible')) {
+            emotion = "lonely";
+        }
+        else if (lower.includes('sad') || lower.includes('depressed') || lower.includes('heartbroken') || lower.includes('grief') || lower.includes('hurt') || lower.includes('pain') || lower.includes('crying') || lower.includes('tears') || lower.includes('empty') || lower.includes('miserable') || lower.includes('unhappy') || lower.includes('down') || lower.includes('low')) {
+            emotion = "sad";
+        }
+        else if (lower.includes('anxious') || lower.includes('anxiety') || lower.includes('nervous') || lower.includes('worry') || lower.includes('worried') || lower.includes('stressed') || lower.includes('panic') || lower.includes('overthinking') || lower.includes('scared') || lower.includes('fear') || lower.includes('dread') || lower.includes('restless') || lower.includes('uneasy')) {
+            emotion = "anxious";
+        }
+        else if (lower.includes('angry') || lower.includes('mad') || lower.includes('frustrated') || lower.includes('rage') || lower.includes('annoyed') || lower.includes('fed up') || lower.includes('sick of') || lower.includes('pissed') || lower.includes('resentful') || lower.includes('bitter')) {
+            emotion = "angry";
+        }
+        else if (lower.includes('tired') || lower.includes('exhausted') || lower.includes('drained') || lower.includes('burnout') || lower.includes('no energy') || lower.includes('sleepy') || lower.includes('fatigued') || lower.includes('worn out') || lower.includes('burnt out')) {
+            emotion = "tired";
+        }
+        else if (lower.includes('happy') || lower.includes('joy') || lower.includes('grateful') || lower.includes('blessed') || lower.includes('good day') || lower.includes('peaceful') || lower.includes('calm') || lower.includes('content') || lower.includes('wonderful') || lower.includes('amazing')) {
+            emotion = "hopeful";
+        }
+        
+        let responsePool = [];
+        
+        if (emotion === "hopeless") {
+            responsePool = [
+                `🖤 ${name}, this sounds really heavy. Thank you for writing it down. Please reach out to someone today - a friend, a family member, a crisis line. You don't have to carry this alone. You matter.`,
+                `🖤 ${name}, I'm really glad you wrote this. Hopelessness lies - it tells you nothing will ever change. But you writing this means some part of you still hopes to be heard. Hold onto that part. Please reach out for help.`,
+                `🖤 ${name}, thank you for being honest about feeling this way. That takes real courage. What you're feeling is valid, but it's not permanent. Please talk to someone you trust today. You deserve support.`
+            ];
+        } else if (emotion === "lonely") {
+            responsePool = [
+                `🫂 ${name}, I hear the loneliness in your words. It's like standing in a room full of people and still feeling invisible. You wrote it down though - that's you fighting back. I see you.`,
+                `🫂 ${name}, feeling unseen is one of the heaviest feelings. Thank you for trusting this space with it. You're not as alone as it feels right now.`,
+                `🫂 ${name}, loneliness lies to us. It tells us nobody sees us, nobody cares. But you showed up here. That's proof that some part of you still believes in being heard.`
+            ];
+        } else if (emotion === "sad") {
+            responsePool = [
+                `🌧️ ${name}, sadness is heavy. You don't have to pretend to be okay here. Just naming it - which you did - is already a step. One breath at a time.`,
+                `🌧️ ${name}, I notice the weight in your words. Sadness isn't weakness - it's proof that you care deeply about something. What's on your heart right now?`,
+                `🌧️ ${name}, some days are just heavy. There's no fix for it tonight. But you writing it down means you're not running from it. I'm here with you.`
+            ];
+        } else if (emotion === "anxious") {
+            responsePool = [
+                `🌀 ${name}, anxiety is exhausting. Your mind is running scenarios that haven't happened yet. Try this: name one thing you can see, one you can hear, one you can feel. You're safe right now.`,
+                `🌀 ${name}, overthinking is your brain trying to protect you. That's not weakness. Take one deep breath. Just one. You've got this.`,
+                `🌀 ${name}, worry has a loud voice. But you writing it down? That's you taking some power back. What's one small thing that feels certain right now?`
+            ];
+        } else if (emotion === "angry") {
+            responsePool = [
+                `😤 ${name}, anger is honest. It shows up when something unfair happened. Don't swallow it - but don't let it drive either. What specifically happened?`,
+                `😤 ${name}, I hear the frustration. Anger gets a bad reputation, but sometimes it's just your soul saying "I deserve better." What would feel fair to you?`,
+                `😤 ${name}, you're angry. Good. That means you still have a sense of what's right and wrong. Now the question is: what action do you want to take?`
+            ];
+        } else if (emotion === "tired") {
+            responsePool = [
+                `🌙 ${name}, you sound exhausted - not "need coffee" tired, but soul tired. Rest isn't weakness. You've been carrying a lot. Put it down for a bit.`,
+                `🌙 ${name}, burnout is real. Pushing through without rest doesn't make you stronger. What's one small thing you can remove from your plate today?`,
+                `🌙 ${name}, being tired all the time isn't a personality flaw. It's a signal. Something is draining you. You deserve rest.`
+            ];
+        } else if (emotion === "hopeful") {
+            responsePool = [
+                `☀️ ${name}, this feels different. Joy, gratitude, peace - these moments matter more than we think. What happened today that contributed to this feeling?`,
+                `☀️ ${name}, I'm glad you're sharing a softer moment. These aren't silly - they're anchors. Come back to this feeling when things get hard.`,
+                `☀️ ${name}, you wrote about something good. That's not nothing. That's proof that feelings are temporary - both the hard ones AND the good ones.`
+            ];
+        } else {
+            responsePool = [
+                `📝 ${name}, I read your words. You showed up here - that's not nothing. Writing things down helps. Keep going.`,
+                `📝 ${name}, thanks for writing. Not every entry has to be a big emotional release. Sometimes just documenting the day is enough. You're doing the work.`,
+                `📝 ${name}, I see you. You took a moment to check in with yourself. That's more than most people do. Be proud of that.`
+            ];
+        }
+        
+        let randomIndex = Math.floor(Math.random() * responsePool.length);
+        let response = responsePool[randomIndex];
+        
+        if (allEntries.length >= 7 && emotion !== "hopeless") {
+            response += `\n\n✍️ You've written ${allEntries.length} entries. That's you showing up for yourself, again and again. That's quiet strength.`;
+        }
+        
+        if (response === lastResponse && responsePool.length > 1) {
+            randomIndex = (randomIndex + 1) % responsePool.length;
+            response = responsePool[randomIndex];
+        }
+        lastResponse = response;
+        
+        return response;
+    }
+
+    function updateResponse() {
+        if (diaryEntries.length === 0) {
+            document.getElementById('responseBox').innerHTML = `✨ write something, ${currentUser || "you"} — I'll read it carefully.`;
+            return;
+        }
+        const latestEntry = diaryEntries[0];
+        const fullText = (latestEntry.title + " " + latestEntry.content);
+        const response = getSmartResponse(fullText, currentUser || "you", diaryEntries);
+        document.getElementById('responseBox').innerHTML = response.replace(/\n/g, '<br>');
+    }
+
+    function renderMoodGraph() {
+        const container = document.getElementById('moodGraphContainer');
+        if (!diaryEntries.length) {
+            container.innerHTML = '<div class="no-graph">📝 write entries to see your mood graph</div>';
+            return;
+        }
+        
+        const last7 = [...diaryEntries].slice(0, 7).reverse();
+        if (last7.length === 0) {
+            container.innerHTML = '<div class="no-graph">📝 write entries to see your graph</div>';
+            return;
+        }
+        
+        const maxValue = 5, minValue = 1;
+        let html = '<div class="bars">';
+        for (let i = 0; i < last7.length; i++) {
+            const entry = last7[i];
+            const moodValue = getMoodValue(entry.mood);
+            const heightPercent = ((moodValue - minValue) / (maxValue - minValue)) * 120;
+            const barHeight = Math.max(20, Math.min(140, heightPercent));
+            const moodEmoji = entry.mood.split(' ')[0];
+            const shortDate = entry.date.slice(5);
+            
+            let barColor = moodValue >= 4 ? 'linear-gradient(180deg, #e8c4e0, #c8a8dc)' :
+                          (moodValue >= 2.5 ? 'linear-gradient(180deg, #d4c0e8, #b89bc4)' : 'linear-gradient(180deg, #c4b0d4, #a088b0)');
+            
+            html += `<div class="bar-item"><div class="bar-emoji">${moodEmoji}</div><div class="bar" style="height: ${barHeight}px; background: ${barColor};"></div><div class="bar-label">${shortDate}</div></div>`;
+        }
+        html += '</div><div style="font-size: 0.6rem; text-align: center; margin-top: 12px; color: #b89bc4;">↑ higher = lighter · lower = heavier</div>';
+        container.innerHTML = html;
+    }
+
+    function updateStats() {
+        document.getElementById('statEntries').innerText = diaryEntries.length;
+        if (diaryEntries.length === 0) {
+            document.getElementById('statStreak').innerText = '0';
+            return;
+        }
+        const uniqueDates = [...new Set(diaryEntries.map(e => e.date))].sort().reverse();
+        let streak = 1;
+        for (let i = 0; i < uniqueDates.length - 1; i++) {
+            const diff = (new Date(uniqueDates[i]) - new Date(uniqueDates[i+1])) / (1000*3600*24);
+            if (diff === 1) streak++;
+            else break;
+        }
+        document.getElementById('statStreak').innerText = streak;
+    }
+
+    function renderEntries() {
+        const container = document.getElementById('entriesFeed');
+        if (diaryEntries.length === 0) {
+            container.innerHTML = '— nothing yet. —';
+            return;
+        }
+        let html = '';
+        for (let i = 0; i < diaryEntries.length; i++) {
+            const e = diaryEntries[i];
+            const preview = e.content.length > 120 ? e.content.slice(0, 120) + '…' : e.content;
+            html += `<div class="entry-item"><button class="delete-btn" data-id="${e.id}">✖</button><div style="font-size:0.7rem; color:#bcaa9c;">${e.date} · ${e.mood || '🌸'}</div><div style="font-weight:500; margin: 6px 0;">${escapeHtml(e.title || 'untitled')}</div><div class="entry-content-preview">${escapeHtml(preview)}</div></div>`;
+        }
+        container.innerHTML = html;
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                diaryEntries = diaryEntries.filter(entry => entry.id !== id);
+                saveAll();
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
+    }
+
+    function saveAll() {
+        localStorage.setItem(`diary_${currentUser}`, JSON.stringify(diaryEntries));
+        updateStats();
+        renderEntries();
+        renderMoodGraph();
+        updateResponse();
+    }
+
+    function loadUser() {
+        const saved = localStorage.getItem(`diary_${currentUser}`);
+        diaryEntries = saved ? JSON.parse(saved) : [];
+        updateStats();
+        renderEntries();
+        renderMoodGraph();
+        updateResponse();
+    }
+
+    let selectedMood = "🌸 soft";
+    function bindMoods() {
+        document.querySelectorAll('.mood').forEach(m => {
+            m.removeEventListener('click', moodClick);
+            m.addEventListener('click', moodClick);
+        });
+    }
+    function moodClick() {
+        document.querySelectorAll('.mood').forEach(s => s.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedMood = this.getAttribute('data-mood');
+    }
+
+    function initDiary(user, diaryNick) {
+        currentUser = user.trim() || "friend";
+        const nick = diaryNick.trim();
+        if (nick) {
+            currentDiaryName = nick;
+            document.getElementById('mainTitle').innerHTML = `🕯️ ${nick}`;
+            document.getElementById('mainSub').innerHTML = `a soft place for ${currentUser}`;
+        } else {
+            currentDiaryName = `${currentUser}'s corner`;
+            document.getElementById('mainTitle').innerHTML = `🕯️ ${currentUser}'s corner`;
+            document.getElementById('mainSub').innerHTML = `a soft place to write`;
+        }
+        loadUser();
+        document.getElementById('setupView').style.display = 'none';
+        document.getElementById('diaryView').style.display = 'block';
+        
+        setTodaysDate();
+        
+        bindMoods();
+        document.querySelector('.mood')?.classList.add('selected');
+        selectedMood = "🌸 soft";
+    }
+
+    document.getElementById('startDiaryBtn')?.addEventListener('click', () => {
+        const name = document.getElementById('userName').value;
+        if (!name.trim()) { alert("enter your name"); return; }
+        initDiary(name, document.getElementById('diaryNick').value);
+    });
+    document.getElementById('guestStartBtn')?.addEventListener('click', () => initDiary("friend", ""));
+    
+    document.getElementById('saveEntryBtn')?.addEventListener('click', () => {
+        const date = document.getElementById('entryDate').value;
+        if (!date) {
+            alert("please select a date");
+            return;
+        }
+        const title = document.getElementById('entryTitle').value.trim() || "untitled";
+        const content = document.getElementById('entryText').value.trim();
+        if (!content) { alert("write something"); return; }
+        
+        diaryEntries.unshift({ 
+            id: Date.now(), 
+            date: date, 
+            mood: selectedMood, 
+            title: title, 
+            content: content 
+        });
+        
+        saveAll();
+        document.getElementById('entryTitle').value = "";
+        document.getElementById('entryText').value = "";
+        setTodaysDate();
+    });
+    
+    document.getElementById('refreshResponseBtn')?.addEventListener('click', updateResponse);
+    document.getElementById('resetAllBtn')?.addEventListener('click', () => {
+        document.getElementById('diaryView').style.display = 'none';
+        document.getElementById('setupView').style.display = 'block';
+        currentUser = "";
+        diaryEntries = [];
+    });
+
+    document.getElementById('setupView').style.display = 'block';
+    document.getElementById('diaryView').style.display = 'none';
+</script>
 </body>
-
 </html>

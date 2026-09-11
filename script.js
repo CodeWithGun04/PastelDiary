@@ -3,7 +3,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/fireba
 import {
     getAuth,
     GoogleAuthProvider,
-    signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
@@ -464,8 +465,6 @@ function updateStats() {
     }
 
 
-    /* average mood */
-
     if (statAverage) {
 
         if (diaryEntries.length === 0) {
@@ -501,8 +500,6 @@ function updateStats() {
     }
 
 
-    /* total words */
-
     if (statWords) {
 
         const words =
@@ -534,8 +531,6 @@ function updateStats() {
 
     }
 
-
-    /* main mood */
 
     if (statMood) {
 
@@ -574,8 +569,6 @@ function updateStats() {
     }
 
 
-    /* this week */
-
     if (statWeek) {
 
         const now = new Date();
@@ -610,8 +603,6 @@ function updateStats() {
 
     }
 
-
-    /* streak */
 
     if (statStreak) {
 
@@ -690,9 +681,7 @@ function updateStats() {
             }
 
 
-            statStreak.innerText =
-
-                streak;
+            statStreak.innerText = streak;
 
         }
     }
@@ -1211,7 +1200,7 @@ function initDiary(user, diaryNick) {
 
 
 /* =========================
-   GOOGLE AUTH
+   GOOGLE AUTH - SAFARI FRIENDLY
 ========================= */
 
 
@@ -1232,7 +1221,7 @@ async function signInWithGoogle() {
 
         button.innerText =
 
-            "✨ signing you in...";
+            "✨ opening Google...";
 
     }
 
@@ -1241,20 +1230,88 @@ async function signInWithGoogle() {
 
         console.log(
 
-            "Starting Google sign-in..."
+            "Starting Google redirect..."
 
         );
 
 
+        await signInWithRedirect(
+
+            auth,
+
+            googleProvider
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+
+            "GOOGLE AUTH ERROR:",
+
+            error
+
+        );
+
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.innerText =
+
+                "✨ Continue with Google";
+
+        }
+
+
+        let message =
+
+            "something went wrong while signing you in ♡";
+
+
+        if (
+
+            error.code ===
+
+            "auth/unauthorized-domain"
+
+        ) {
+
+            message =
+
+                "this website is not authorized in Firebase yet.";
+
+        }
+
+
+        alert(message);
+
+    }
+}
+
+
+/* =========================
+   HANDLE GOOGLE REDIRECT
+========================= */
+
+
+async function handleGoogleRedirect() {
+
+    try {
+
         const result =
 
-            await signInWithPopup(
+            await getRedirectResult(auth);
 
-                auth,
 
-                googleProvider
+        if (!result || !result.user) {
 
-            );
+            return;
+
+        }
 
 
         firebaseUser = result.user;
@@ -1262,7 +1319,7 @@ async function signInWithGoogle() {
 
         console.log(
 
-            "Google user:",
+            "Google redirect successful:",
 
             firebaseUser
 
@@ -1276,21 +1333,6 @@ async function signInWithGoogle() {
             "friend";
 
 
-        /*
-
-           IMPORTANT:
-
-           Google login does NOT directly
-
-           enter the diary.
-
-           It fills your name and lets
-
-           you choose your diary name.
-
-        */
-
-
         const nameInput =
 
             document.getElementById(
@@ -1302,9 +1344,7 @@ async function signInWithGoogle() {
 
         if (nameInput) {
 
-            nameInput.value =
-
-                googleName;
+            nameInput.value = googleName;
 
         }
 
@@ -1329,7 +1369,18 @@ async function signInWithGoogle() {
         }
 
 
+        const button =
+
+            document.getElementById(
+
+                "googleSignInBtn"
+
+            );
+
+
         if (button) {
+
+            button.disabled = false;
 
             button.innerText =
 
@@ -1350,46 +1401,36 @@ async function signInWithGoogle() {
 
         console.error(
 
-            "GOOGLE AUTH ERROR:",
+            "GOOGLE REDIRECT ERROR:",
 
             error
 
         );
 
 
+        const button =
+
+            document.getElementById(
+
+                "googleSignInBtn"
+
+            );
+
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.innerText =
+
+                "✨ Continue with Google";
+
+        }
+
+
         let message =
 
             "something went wrong while signing you in ♡";
-
-
-        if (
-
-            error.code ===
-
-            "auth/popup-closed-by-user"
-
-        ) {
-
-            message =
-
-                "the Google sign-in window was closed.";
-
-        }
-
-
-        if (
-
-            error.code ===
-
-            "auth/popup-blocked"
-
-        ) {
-
-            message =
-
-                "your browser blocked the Google sign-in popup.";
-
-        }
 
 
         if (
@@ -1407,20 +1448,30 @@ async function signInWithGoogle() {
         }
 
 
-        alert(message);
+        if (
 
-    }
+            error.code ===
 
-    finally {
+            "auth/operation-not-allowed"
 
-        if (button) {
+        ) {
 
-            button.disabled = false;
+            message =
+
+                "Google sign-in is not enabled in Firebase.";
 
         }
 
+
+        alert(message);
+
     }
 }
+
+
+/* =========================
+   GOOGLE BUTTON
+========================= */
 
 
 const googleButton =
@@ -2071,6 +2122,7 @@ async function getWeather(city) {
             "couldn't get the weather right now ♡";
 
     }
+
 }
 
 
@@ -2214,6 +2266,8 @@ document.addEventListener(
         setTodaysDate();
 
         bindMoods();
+
+        handleGoogleRedirect();
 
     }
 

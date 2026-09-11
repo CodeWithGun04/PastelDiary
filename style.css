@@ -14,7 +14,7 @@
     --text: #594c58;
     --muted: #9c8d99;
     --border: #f0dfe8;
-    --white: rgba(255,255,255,0.78);
+    --white: rgba(255, 255, 255, 0.78);
 }
 
 body {
@@ -42,6 +42,7 @@ textarea {
 
 button {
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .hidden {
@@ -55,9 +56,9 @@ button {
     position: fixed;
     border-radius: 50%;
     filter: blur(60px);
-    opacity: .35;
+    opacity: 0.35;
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
 }
 
 .shape-one {
@@ -84,6 +85,8 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    z-index: 10;
 }
 
 .setup-card {
@@ -93,8 +96,10 @@ button {
     border: 1px solid white;
     border-radius: 30px;
     padding: 45px;
-    box-shadow: 0 25px 70px rgba(150, 110, 140, .13);
+    box-shadow: 0 25px 70px rgba(150, 110, 140, 0.13);
     text-align: center;
+    position: relative;
+    z-index: 11;
 }
 
 .logo {
@@ -110,6 +115,8 @@ button {
 
 .setup-form {
     text-align: left;
+    position: relative;
+    z-index: 12;
 }
 
 label {
@@ -127,7 +134,7 @@ label {
 .entries-header input {
     width: 100%;
     border: 1px solid var(--border);
-    background: rgba(255,255,255,.7);
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 14px;
     padding: 14px 16px;
     outline: none;
@@ -137,7 +144,7 @@ label {
 input:focus,
 textarea:focus {
     border-color: var(--pink);
-    box-shadow: 0 0 0 4px rgba(233,169,189,.12);
+    box-shadow: 0 0 0 4px rgba(233, 169, 189, 0.12);
 }
 
 
@@ -149,12 +156,15 @@ textarea:focus {
     color: white;
     border-radius: 14px;
     padding: 14px 20px;
-    transition: .2s;
+    transition: 0.2s;
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
 }
 
 .primary-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(189,123,152,.25);
+    box-shadow: 0 10px 25px rgba(189, 123, 152, 0.25);
 }
 
 .setup-form .primary-button {
@@ -164,10 +174,13 @@ textarea:focus {
 
 .secondary-button {
     border: 1px solid var(--border);
-    background: rgba(255,255,255,.65);
+    background: rgba(255, 255, 255, 0.65);
     color: var(--dark-pink);
     border-radius: 14px;
     padding: 12px 18px;
+    position: relative;
+    z-index: 20;
+    pointer-events: auto;
 }
 
 .setup-form .secondary-button {
@@ -181,6 +194,8 @@ textarea:focus {
 .app {
     max-width: 1180px;
     margin: auto;
+    position: relative;
+    z-index: 5;
 }
 
 .topbar {
@@ -194,7 +209,7 @@ textarea:focus {
     color: var(--muted);
     text-transform: lowercase;
     font-size: 12px;
-    letter-spacing: .04em;
+    letter-spacing: 0.04em;
 }
 
 .topbar h1 {
@@ -223,8 +238,8 @@ textarea:focus {
 .card {
     background: var(--white);
     backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.9);
-    box-shadow: 0 18px 45px rgba(150,110,140,.08);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 18px 45px rgba(150, 110, 140, 0.08);
 }
 
 .dashboard-card {
@@ -308,12 +323,14 @@ textarea:focus {
 
 .mood {
     border: 1px solid var(--border);
-    background: rgba(255,255,255,.55);
+    background: rgba(255, 255, 255, 0.55);
     padding: 12px 5px;
     border-radius: 14px;
     color: var(--text);
     font-size: 12px;
-    transition: .2s;
+    transition: 0.2s;
+    position: relative;
+    z-index: 10;
 }
 
 .mood span {
@@ -341,7 +358,7 @@ textarea {
     min-height: 190px;
     resize: vertical;
     border: 1px solid var(--border);
-    background: rgba(255,255,255,.65);
+    background: rgba(255, 255, 255, 0.65);
     border-radius: 16px;
     padding: 15px;
     outline: none;
@@ -362,7 +379,11 @@ textarea {
 /* REFLECTION */
 
 .reflection-card {
-    background: linear-gradient(145deg, rgba(255,241,247,.9), rgba(245,241,255,.9));
+    background: linear-gradient(
+        145deg,
+        rgba(255, 241, 247, 0.9),
+        rgba(245, 241, 255, 0.9)
+    );
 }
 
 .ai-icon {
@@ -399,7 +420,7 @@ textarea {
 
 .analytics-grid {
     display: grid;
-    grid-template-columns: .9fr 1.1fr;
+    grid-template-columns: 0.9fr 1.1fr;
     gap: 18px;
     margin-bottom: 18px;
 }
@@ -412,7 +433,7 @@ textarea {
 }
 
 .stat {
-    background: rgba(255,255,255,.6);
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 16px;
     padding: 18px 10px;
     text-align: center;
@@ -489,7 +510,7 @@ textarea {
     border: 1px solid var(--border);
     border-radius: 17px;
     padding: 18px;
-    background: rgba(255,255,255,.48);
+    background: rgba(255, 255, 255, 0.48);
 }
 
 .entry-top {

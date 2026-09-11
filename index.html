@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
     <title>pastel diary · by Gun</title>
 
     <style>
@@ -71,7 +70,7 @@
         }
 
         .btn-pastel:hover {
-            transform: translateY(-1px);
+            background: #dcc6e9;
         }
 
         .diary-container {
@@ -120,6 +119,12 @@
             font-size: 0.95rem;
         }
 
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #d6b6dc;
+        }
+
         textarea {
             min-height: 200px;
             max-height: 500px;
@@ -160,6 +165,10 @@
             transition: 0.1s;
         }
 
+        .mood:hover {
+            background: #fff7fc;
+        }
+
         .mood.selected {
             background: #ecd9f5;
             border-color: #c8a8dc;
@@ -176,6 +185,10 @@
             color: #6e4e7e;
             cursor: pointer;
             font-size: 1rem;
+        }
+
+        button.primary:hover {
+            background: #ddc5e8;
         }
 
         .stats-row {
@@ -199,8 +212,51 @@
             color: #c68eb8;
         }
 
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .analytics-box {
+            background: #fffafd;
+            border-radius: 28px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid #f2dfed;
+        }
+
+        .analytics-icon {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .analytics-number {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #b47d9e;
+        }
+
+        .analytics-label {
+            font-size: 0.7rem;
+            color: #b8a9c2;
+            margin-top: 3px;
+        }
+
+        .mood-summary {
+            margin-top: 15px;
+            background: #fff7fc;
+            border-radius: 28px;
+            padding: 1rem;
+            text-align: center;
+            color: #8f759b;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
         .graph-container {
-            margin-top: 0.5rem;
+            margin-top: 1rem;
             padding: 0.5rem;
         }
 
@@ -254,6 +310,33 @@
             font-size: 0.8rem;
         }
 
+        .weather-card-title {
+            color: #b47d9e;
+            margin-bottom: 12px;
+        }
+
+        .weather-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .weather-input-row input {
+            margin-bottom: 0;
+        }
+
+        .weather-result {
+            margin-top: 12px;
+            background: #fff7fc;
+            border-radius: 28px;
+            padding: 1rem;
+            color: #8f759b;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            text-align: center;
+            min-height: 45px;
+        }
+
         .response-box {
             background: #fff7fc;
             border-radius: 36px;
@@ -292,6 +375,10 @@
             font-size: 1rem;
         }
 
+        .delete-btn:hover {
+            color: #b47d9e;
+        }
+
         .reset-link {
             text-align: center;
             margin-top: 1rem;
@@ -313,48 +400,35 @@
             margin-top: 2rem;
         }
 
-        .weather-card-title {
-            color: #b47d9e;
-            margin-bottom: 10px;
-        }
-
-        .weather-input-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .weather-input-row input {
-            margin-bottom: 0;
-        }
-
-        .weather-result {
-            text-align: center;
-            color: #8f759b;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            line-height: 1.7;
-        }
-
-        .weather-main-temp {
-            font-size: 1.5rem;
-        }
-
         @media (max-width: 600px) {
             body {
                 padding: 1rem 0.7rem;
             }
 
-            .setup-card,
             .card {
-                border-radius: 36px;
+                padding: 1.2rem;
+                border-radius: 38px;
+            }
+
+            .setup-card {
+                border-radius: 42px;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr 1fr;
             }
 
             .weather-input-row {
                 flex-direction: column;
             }
 
+            .weather-input-row input,
             .weather-input-row button {
                 width: 100%;
+            }
+
+            .bars {
+                gap: 5px;
             }
         }
     </style>
@@ -364,14 +438,10 @@
 
 <div class="container">
 
-    <!-- SETUP -->
     <div id="setupView" class="setup-card">
-
         <h2>🫧 welcome</h2>
 
-        <p>
-            a soft place to write what's in your heart
-        </p>
+        <p>a soft place to write what's in your heart</p>
 
         <input
             type="text"
@@ -390,7 +460,6 @@
         >
 
         <div>
-
             <button id="startDiaryBtn" class="btn-pastel">
                 🌸 start
             </button>
@@ -398,48 +467,35 @@
             <button id="guestStartBtn" class="btn-pastel">
                 just go in
             </button>
-
         </div>
 
         <p style="margin-top: 1.5rem; font-size: 0.7rem; color:#c2abc9;">
             💫 made by Gun
         </p>
-
     </div>
 
 
-    <!-- DIARY -->
     <div id="diaryView" class="diary-container">
 
         <div class="header">
-
-            <h1 id="mainTitle">
-                🕯️ quiet corner
-            </h1>
-
+            <h1 id="mainTitle">🕯️ quiet corner</h1>
             <div class="sub" id="mainSub">
                 a pastel place to write
             </div>
-
         </div>
 
 
         <!-- WRITE ENTRY -->
+
         <div class="card">
 
-            <input
-                type="date"
-                id="entryDate"
-            />
+            <input type="date" id="entryDate">
 
             <div class="date-hint">
                 📅 today's date by default · you can change it
             </div>
 
-            <div
-                class="mood-group"
-                id="moodGroup"
-            >
+            <div class="mood-group" id="moodGroup">
 
                 <span class="mood" data-mood="🌸 soft">
                     🌸 soft
@@ -479,7 +535,7 @@
                 type="text"
                 id="entryTitle"
                 placeholder="a little title..."
-            />
+            >
 
             <textarea
                 id="entryText"
@@ -487,10 +543,7 @@
                 placeholder="pour your heart out. this space is yours. 💛"
             ></textarea>
 
-            <button
-                class="primary"
-                id="saveEntryBtn"
-            >
+            <button class="primary" id="saveEntryBtn">
                 ✍️ save
             </button>
 
@@ -498,6 +551,7 @@
 
 
         <!-- WEATHER -->
+
         <div class="card">
 
             <div class="weather-card-title">
@@ -510,6 +564,7 @@
                     type="text"
                     id="weatherCity"
                     placeholder="enter your city..."
+                    autocomplete="off"
                 >
 
                 <button
@@ -522,48 +577,113 @@
 
             </div>
 
-            <div
-                id="weatherResult"
-                class="weather-result"
-            >
+            <div id="weatherResult" class="weather-result">
                 ✨ enter a city to see live weather
             </div>
 
         </div>
 
 
-        <!-- STATS + GRAPH -->
+        <!-- STATS + ANALYTICS -->
+
         <div class="card">
 
             <div class="stats-row">
 
                 <div class="stat-card">
+                    <div class="stat-number" id="statEntries">
+                        0
+                    </div>
+                    <div>entries</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number" id="statStreak">
+                        0
+                    </div>
+                    <div>streak</div>
+                </div>
+
+            </div>
+
+
+            <div class="analytics-grid">
+
+                <div class="analytics-box">
+
+                    <div class="analytics-icon">
+                        📅
+                    </div>
 
                     <div
-                        class="stat-number"
-                        id="statEntries"
+                        class="analytics-number"
+                        id="statWeek"
                     >
                         0
                     </div>
 
-                    <div>
-                        entries
+                    <div class="analytics-label">
+                        this week
                     </div>
 
                 </div>
 
 
-                <div class="stat-card">
+                <div class="analytics-box">
+
+                    <div class="analytics-icon">
+                        🌸
+                    </div>
 
                     <div
-                        class="stat-number"
-                        id="statStreak"
+                        class="analytics-number"
+                        id="statMood"
+                    >
+                        —
+                    </div>
+
+                    <div class="analytics-label">
+                        favorite mood
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-box">
+
+                    <div class="analytics-icon">
+                        ✍️
+                    </div>
+
+                    <div
+                        class="analytics-number"
+                        id="statWords"
                     >
                         0
                     </div>
 
-                    <div>
-                        streak
+                    <div class="analytics-label">
+                        words written
+                    </div>
+
+                </div>
+
+
+                <div class="analytics-box">
+
+                    <div class="analytics-icon">
+                        💭
+                    </div>
+
+                    <div
+                        class="analytics-number"
+                        id="statAverage"
+                    >
+                        —
+                    </div>
+
+                    <div class="analytics-label">
+                        mood score
                     </div>
 
                 </div>
@@ -571,10 +691,18 @@
             </div>
 
 
+            <div
+                class="mood-summary"
+                id="moodSummary"
+            >
+                🌷 your mood story will appear here
+            </div>
+
+
             <div class="graph-container">
 
                 <div class="graph-title">
-                    🎨 last 7 days · how you've been feeling
+                    🎨 last 7 entries · how you've been feeling
                 </div>
 
                 <div id="moodGraphContainer">
@@ -591,13 +719,14 @@
 
 
         <!-- REFLECTION -->
+
         <div class="card">
 
             <div
                 style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
                 "
             >
 
@@ -631,6 +760,7 @@
 
 
         <!-- ENTRIES -->
+
         <div class="card">
 
             <span style="color:#b47d9e;">
@@ -639,7 +769,7 @@
 
             <div
                 id="entriesFeed"
-                style="margin-top: 12px;"
+                style="margin-top:12px;"
             >
                 — nothing yet. —
             </div>
@@ -647,7 +777,6 @@
         </div>
 
 
-        <!-- RESET -->
         <div class="reset-link">
 
             <button id="resetAllBtn">
@@ -666,1356 +795,7 @@
 </div>
 
 
-<script>
-
-    let diaryEntries = [];
-
-    let currentUser = "";
-
-    let currentDiaryName = "";
-
-    let lastResponse = "";
-
-
-    /* DATE */
-
-    function setTodaysDate() {
-
-        const today = new Date();
-
-        const year = today.getFullYear();
-
-        const month = String(
-            today.getMonth() + 1
-        ).padStart(2, '0');
-
-        const day = String(
-            today.getDate()
-        ).padStart(2, '0');
-
-        const todayString =
-            `${year}-${month}-${day}`;
-
-        const dateInput =
-            document.getElementById('entryDate');
-
-        if (dateInput) {
-            dateInput.value = todayString;
-        }
-
-    }
-
-
-    /* MOOD VALUES */
-
-    function getMoodValue(moodStr) {
-
-        const map = {
-
-            '🌸 soft': 5,
-
-            '💖 hopeful': 4,
-
-            '💔 heavy': 2,
-
-            '😔 sad': 2,
-
-            '🫂 lonely': 1.5,
-
-            '🌀 anxious': 2.5,
-
-            '🌙 tired': 2,
-
-            '😤 angry': 2.8
-
-        };
-
-        return map[moodStr] || 3;
-
-    }
-
-
-    /* REFLECTION */
-
-    function getSmartResponse(
-        text,
-        userName,
-        allEntries
-    ) {
-
-        const lower = text.toLowerCase();
-
-        const name =
-            userName || "you";
-
-        let emotion = null;
-
-
-        if (
-            lower.includes('hopeless') ||
-            lower.includes('worthless') ||
-            lower.includes('numb') ||
-            lower.includes('nothing matters') ||
-            lower.includes('give up') ||
-            lower.includes('no point') ||
-            lower.includes('want to die') ||
-            lower.includes('end it')
-        ) {
-
-            emotion = "hopeless";
-
-        }
-
-        else if (
-            lower.includes('lonely') ||
-            lower.includes('alone') ||
-            lower.includes('akela') ||
-            lower.includes('nobody') ||
-            lower.includes('no one') ||
-            lower.includes('by myself') ||
-            lower.includes('isolated') ||
-            lower.includes('abandoned') ||
-            lower.includes('left out') ||
-            lower.includes('unseen') ||
-            lower.includes('invisible')
-        ) {
-
-            emotion = "lonely";
-
-        }
-
-        else if (
-            lower.includes('sad') ||
-            lower.includes('depressed') ||
-            lower.includes('heartbroken') ||
-            lower.includes('grief') ||
-            lower.includes('hurt') ||
-            lower.includes('pain') ||
-            lower.includes('crying') ||
-            lower.includes('tears') ||
-            lower.includes('empty') ||
-            lower.includes('miserable') ||
-            lower.includes('unhappy') ||
-            lower.includes('down') ||
-            lower.includes('low')
-        ) {
-
-            emotion = "sad";
-
-        }
-
-        else if (
-            lower.includes('anxious') ||
-            lower.includes('anxiety') ||
-            lower.includes('nervous') ||
-            lower.includes('worry') ||
-            lower.includes('worried') ||
-            lower.includes('stressed') ||
-            lower.includes('panic') ||
-            lower.includes('overthinking') ||
-            lower.includes('scared') ||
-            lower.includes('fear') ||
-            lower.includes('dread') ||
-            lower.includes('restless') ||
-            lower.includes('uneasy')
-        ) {
-
-            emotion = "anxious";
-
-        }
-
-        else if (
-            lower.includes('angry') ||
-            lower.includes('mad') ||
-            lower.includes('frustrated') ||
-            lower.includes('rage') ||
-            lower.includes('annoyed') ||
-            lower.includes('fed up') ||
-            lower.includes('sick of') ||
-            lower.includes('pissed') ||
-            lower.includes('resentful') ||
-            lower.includes('bitter')
-        ) {
-
-            emotion = "angry";
-
-        }
-
-        else if (
-            lower.includes('tired') ||
-            lower.includes('exhausted') ||
-            lower.includes('drained') ||
-            lower.includes('burnout') ||
-            lower.includes('no energy') ||
-            lower.includes('sleepy') ||
-            lower.includes('fatigued') ||
-            lower.includes('worn out') ||
-            lower.includes('burnt out')
-        ) {
-
-            emotion = "tired";
-
-        }
-
-        else if (
-            lower.includes('happy') ||
-            lower.includes('joy') ||
-            lower.includes('grateful') ||
-            lower.includes('blessed') ||
-            lower.includes('good day') ||
-            lower.includes('peaceful') ||
-            lower.includes('calm') ||
-            lower.includes('content') ||
-            lower.includes('wonderful') ||
-            lower.includes('amazing')
-        ) {
-
-            emotion = "hopeful";
-
-        }
-
-
-        let responsePool = [];
-
-
-        if (emotion === "hopeless") {
-
-            responsePool = [
-
-                `🖤 ${name}, this sounds really heavy. Thank you for writing it down. Please reach out to someone today - a friend, a family member, a crisis line. You don't have to carry this alone. You matter.`,
-
-                `🖤 ${name}, I'm really glad you wrote this. Hopelessness lies - it tells you nothing will ever change. But you writing this means some part of you still hopes to be heard. Hold onto that part. Please reach out for help.`,
-
-                `🖤 ${name}, thank you for being honest about feeling this way. That takes real courage. What you're feeling is valid, but it's not permanent. Please talk to someone you trust today. You deserve support.`
-
-            ];
-
-        }
-
-        else if (emotion === "lonely") {
-
-            responsePool = [
-
-                `🫂 ${name}, I hear the loneliness in your words. It's like standing in a room full of people and still feeling invisible. You wrote it down though - that's you fighting back. I see you.`,
-
-                `🫂 ${name}, feeling unseen is one of the heaviest feelings. Thank you for trusting this space with it. You're not as alone as it feels right now.`,
-
-                `🫂 ${name}, loneliness lies to us. It tells us nobody sees us, nobody cares. But you showed up here. That's proof that some part of you still believes in being heard.`
-
-            ];
-
-        }
-
-        else if (emotion === "sad") {
-
-            responsePool = [
-
-                `🌧️ ${name}, sadness is heavy. You don't have to pretend to be okay here. Just naming it - which you did - is already a step. One breath at a time.`,
-
-                `🌧️ ${name}, I notice the weight in your words. Sadness isn't weakness - it's proof that you care deeply about something. What's on your heart right now?`,
-
-                `🌧️ ${name}, some days are just heavy. There's no fix for it tonight. But you writing it down means you're not running from it. I'm here with you.`
-
-            ];
-
-        }
-
-        else if (emotion === "anxious") {
-
-            responsePool = [
-
-                `🌀 ${name}, anxiety is exhausting. Your mind is running scenarios that haven't happened yet. Try this: name one thing you can see, one you can hear, one you can feel. You're safe right now.`,
-
-                `🌀 ${name}, overthinking is your brain trying to protect you. That's not weakness. Take one deep breath. Just one. You've got this.`,
-
-                `🌀 ${name}, worry has a loud voice. But you writing it down? That's you taking some power back. What's one small thing that feels certain right now?`
-
-            ];
-
-        }
-
-        else if (emotion === "angry") {
-
-            responsePool = [
-
-                `😤 ${name}, anger is honest. It shows up when something unfair happened. Don't swallow it - but don't let it drive either. What specifically happened?`,
-
-                `😤 ${name}, I hear the frustration. Anger gets a bad reputation, but sometimes it's just your soul saying "I deserve better." What would feel fair to you?`,
-
-                `😤 ${name}, you're angry. Good. That means you still have a sense of what's right and wrong. Now the question is: what action do you want to take?`
-
-            ];
-
-        }
-
-        else if (emotion === "tired") {
-
-            responsePool = [
-
-                `🌙 ${name}, you sound exhausted - not "need coffee" tired, but soul tired. Rest isn't weakness. You've been carrying a lot. Put it down for a bit.`,
-
-                `🌙 ${name}, burnout is real. Pushing through without rest doesn't make you stronger. What's one small thing you can remove from your plate today?`,
-
-                `🌙 ${name}, being tired all the time isn't a personality flaw. It's a signal. Something is draining you. You deserve rest.`
-
-            ];
-
-        }
-
-        else if (emotion === "hopeful") {
-
-            responsePool = [
-
-                `☀️ ${name}, this feels different. Joy, gratitude, peace - these moments matter more than we think. What happened today that contributed to this feeling?`,
-
-                `☀️ ${name}, I'm glad you're sharing a softer moment. These aren't silly - they're anchors. Come back to this feeling when things get hard.`,
-
-                `☀️ ${name}, you wrote about something good. That's not nothing. That's proof that feelings are temporary - both the hard ones AND the good ones.`
-
-            ];
-
-        }
-
-        else {
-
-            responsePool = [
-
-                `📝 ${name}, I read your words. You showed up here - that's not nothing. Writing things down helps. Keep going.`,
-
-                `📝 ${name}, thanks for writing. Not every entry has to be a big emotional release. Sometimes just documenting the day is enough. You're doing the work.`,
-
-                `📝 ${name}, I see you. You took a moment to check in with yourself. That's more than most people do. Be proud of that.`
-
-            ];
-
-        }
-
-
-        let randomIndex =
-            Math.floor(
-                Math.random() *
-                responsePool.length
-            );
-
-        let response =
-            responsePool[randomIndex];
-
-
-        if (
-            allEntries.length >= 7 &&
-            emotion !== "hopeless"
-        ) {
-
-            response +=
-                `\n\n✍️ You've written ${allEntries.length} entries. That's you showing up for yourself, again and again. That's quiet strength.`;
-
-        }
-
-
-        if (
-            response === lastResponse &&
-            responsePool.length > 1
-        ) {
-
-            randomIndex =
-                (randomIndex + 1) %
-                responsePool.length;
-
-            response =
-                responsePool[randomIndex];
-
-        }
-
-
-        lastResponse = response;
-
-        return response;
-
-    }
-
-
-    function updateResponse() {
-
-        if (diaryEntries.length === 0) {
-
-            document.getElementById(
-                'responseBox'
-            ).innerHTML =
-                `✨ write something, ${currentUser || "you"} — I'll read it carefully.`;
-
-            return;
-
-        }
-
-
-        const latestEntry =
-            diaryEntries[0];
-
-        const fullText =
-            latestEntry.title +
-            " " +
-            latestEntry.content;
-
-        const response =
-            getSmartResponse(
-                fullText,
-                currentUser || "you",
-                diaryEntries
-            );
-
-        document.getElementById(
-            'responseBox'
-        ).innerHTML =
-            response.replace(
-                /\n/g,
-                '<br>'
-            );
-
-    }
-
-
-    /* GRAPH */
-
-    function renderMoodGraph() {
-
-        const container =
-            document.getElementById(
-                'moodGraphContainer'
-            );
-
-        if (!diaryEntries.length) {
-
-            container.innerHTML =
-                '<div class="no-graph">📝 write entries to see your mood graph</div>';
-
-            return;
-
-        }
-
-
-        const last7 =
-            [...diaryEntries]
-                .slice(0, 7)
-                .reverse();
-
-
-        if (last7.length === 0) {
-
-            container.innerHTML =
-                '<div class="no-graph">📝 write entries to see your graph</div>';
-
-            return;
-
-        }
-
-
-        const maxValue = 5;
-
-        const minValue = 1;
-
-        let html =
-            '<div class="bars">';
-
-
-        for (
-            let i = 0;
-            i < last7.length;
-            i++
-        ) {
-
-            const entry =
-                last7[i];
-
-            const moodValue =
-                getMoodValue(entry.mood);
-
-            const heightPercent =
-                (
-                    (moodValue - minValue) /
-                    (maxValue - minValue)
-                ) * 120;
-
-            const barHeight =
-                Math.max(
-                    20,
-                    Math.min(
-                        140,
-                        heightPercent
-                    )
-                );
-
-            const moodEmoji =
-                entry.mood.split(' ')[0];
-
-            const shortDate =
-                entry.date.slice(5);
-
-
-            let barColor =
-                moodValue >= 4
-                    ? 'linear-gradient(180deg, #e8c4e0, #c8a8dc)'
-                    : (
-                        moodValue >= 2.5
-                            ? 'linear-gradient(180deg, #d4c0e8, #b89bc4)'
-                            : 'linear-gradient(180deg, #c4b0d4, #a088b0)'
-                    );
-
-
-            html +=
-                `<div class="bar-item">
-                    <div class="bar-emoji">${moodEmoji}</div>
-                    <div
-                        class="bar"
-                        style="
-                            height:${barHeight}px;
-                            background:${barColor};
-                        "
-                    ></div>
-                    <div class="bar-label">${shortDate}</div>
-                </div>`;
-
-        }
-
-
-        html +=
-            '</div>' +
-            '<div style="font-size:0.6rem; text-align:center; margin-top:12px; color:#b89bc4;">↑ higher = lighter · lower = heavier</div>';
-
-        container.innerHTML =
-            html;
-
-    }
-
-
-    /* STATS */
-
-    function updateStats() {
-
-        document.getElementById(
-            'statEntries'
-        ).innerText =
-            diaryEntries.length;
-
-
-        if (diaryEntries.length === 0) {
-
-            document.getElementById(
-                'statStreak'
-            ).innerText = '0';
-
-            return;
-
-        }
-
-
-        const uniqueDates =
-            [
-                ...new Set(
-                    diaryEntries.map(
-                        e => e.date
-                    )
-                )
-            ]
-            .sort()
-            .reverse();
-
-
-        let streak = 1;
-
-
-        for (
-            let i = 0;
-            i < uniqueDates.length - 1;
-            i++
-        ) {
-
-            const diff =
-                (
-                    new Date(
-                        uniqueDates[i]
-                    ) -
-                    new Date(
-                        uniqueDates[i + 1]
-                    )
-                ) /
-                (1000 * 3600 * 24);
-
-
-            if (diff === 1) {
-
-                streak++;
-
-            }
-
-            else {
-
-                break;
-
-            }
-
-        }
-
-
-        document.getElementById(
-            'statStreak'
-        ).innerText =
-            streak;
-
-    }
-
-
-    /* ENTRIES */
-
-    function renderEntries() {
-
-        const container =
-            document.getElementById(
-                'entriesFeed'
-            );
-
-
-        if (diaryEntries.length === 0) {
-
-            container.innerHTML =
-                '— nothing yet. —';
-
-            return;
-
-        }
-
-
-        let html = '';
-
-
-        for (
-            let i = 0;
-            i < diaryEntries.length;
-            i++
-        ) {
-
-            const e =
-                diaryEntries[i];
-
-            const preview =
-                e.content.length > 120
-                    ? e.content.slice(0, 120) + '…'
-                    : e.content;
-
-
-            html +=
-                `<div class="entry-item">
-
-                    <button
-                        class="delete-btn"
-                        data-id="${e.id}"
-                    >
-                        ✖
-                    </button>
-
-                    <div
-                        style="
-                            font-size:0.7rem;
-                            color:#bcaa9c;
-                        "
-                    >
-                        ${e.date} · ${e.mood || '🌸'}
-                    </div>
-
-                    <div
-                        style="
-                            font-weight:500;
-                            margin:6px 0;
-                        "
-                    >
-                        ${escapeHtml(
-                            e.title || 'untitled'
-                        )}
-                    </div>
-
-                    <div class="entry-content-preview">
-                        ${escapeHtml(preview)}
-                    </div>
-
-                </div>`;
-
-        }
-
-
-        container.innerHTML =
-            html;
-
-
-        document
-            .querySelectorAll('.delete-btn')
-            .forEach(btn => {
-
-                btn.addEventListener(
-                    'click',
-                    () => {
-
-                        const id =
-                            parseInt(
-                                btn.getAttribute(
-                                    'data-id'
-                                )
-                            );
-
-                        diaryEntries =
-                            diaryEntries.filter(
-                                entry =>
-                                    entry.id !== id
-                            );
-
-                        saveAll();
-
-                    }
-                );
-
-            });
-
-    }
-
-
-    function escapeHtml(str) {
-
-        if (!str) return '';
-
-        return str.replace(
-            /[&<>]/g,
-            m =>
-                m === '&'
-                    ? '&amp;'
-                    : (
-                        m === '<'
-                            ? '&lt;'
-                            : '&gt;'
-                    )
-        );
-
-    }
-
-
-    /* LOCAL STORAGE */
-
-    function saveAll() {
-
-        localStorage.setItem(
-            `diary_${currentUser}`,
-            JSON.stringify(
-                diaryEntries
-            )
-        );
-
-        updateStats();
-
-        renderEntries();
-
-        renderMoodGraph();
-
-        updateResponse();
-
-    }
-
-
-    function loadUser() {
-
-        const saved =
-            localStorage.getItem(
-                `diary_${currentUser}`
-            );
-
-        diaryEntries =
-            saved
-                ? JSON.parse(saved)
-                : [];
-
-        updateStats();
-
-        renderEntries();
-
-        renderMoodGraph();
-
-        updateResponse();
-
-    }
-
-
-    /* MOODS */
-
-    let selectedMood =
-        "🌸 soft";
-
-
-    function bindMoods() {
-
-        document
-            .querySelectorAll('.mood')
-            .forEach(m => {
-
-                m.removeEventListener(
-                    'click',
-                    moodClick
-                );
-
-                m.addEventListener(
-                    'click',
-                    moodClick
-                );
-
-            });
-
-    }
-
-
-    function moodClick() {
-
-        document
-            .querySelectorAll('.mood')
-            .forEach(
-                s =>
-                    s.classList.remove(
-                        'selected'
-                    )
-            );
-
-        this.classList.add(
-            'selected'
-        );
-
-        selectedMood =
-            this.getAttribute(
-                'data-mood'
-            );
-
-    }
-
-
-    /* OPEN DIARY */
-
-    function initDiary(
-        user,
-        diaryNick
-    ) {
-
-        currentUser =
-            user.trim() ||
-            "friend";
-
-        const nick =
-            diaryNick.trim();
-
-
-        if (nick) {
-
-            currentDiaryName =
-                nick;
-
-            document.getElementById(
-                'mainTitle'
-            ).innerHTML =
-                `🕯️ ${nick}`;
-
-            document.getElementById(
-                'mainSub'
-            ).innerHTML =
-                `a soft place for ${currentUser}`;
-
-        }
-
-        else {
-
-            currentDiaryName =
-                `${currentUser}'s corner`;
-
-            document.getElementById(
-                'mainTitle'
-            ).innerHTML =
-                `🕯️ ${currentUser}'s corner`;
-
-            document.getElementById(
-                'mainSub'
-            ).innerHTML =
-                `a soft place to write`;
-
-        }
-
-
-        loadUser();
-
-
-        document.getElementById(
-            'setupView'
-        ).style.display =
-            'none';
-
-
-        document.getElementById(
-            'diaryView'
-        ).style.display =
-            'block';
-
-
-        setTodaysDate();
-
-
-        bindMoods();
-
-
-        document
-            .querySelector('.mood')
-            ?.classList.add(
-                'selected'
-            );
-
-
-        selectedMood =
-            "🌸 soft";
-
-    }
-
-
-    /* START BUTTON */
-
-    document
-        .getElementById(
-            'startDiaryBtn'
-        )
-        ?.addEventListener(
-            'click',
-            () => {
-
-                const name =
-                    document.getElementById(
-                        'userName'
-                    ).value;
-
-
-                if (!name.trim()) {
-
-                    alert(
-                        "enter your name"
-                    );
-
-                    return;
-
-                }
-
-
-                initDiary(
-                    name,
-                    document.getElementById(
-                        'diaryNick'
-                    ).value
-                );
-
-            }
-        );
-
-
-    /* GUEST */
-
-    document
-        .getElementById(
-            'guestStartBtn'
-        )
-        ?.addEventListener(
-            'click',
-            () =>
-                initDiary(
-                    "friend",
-                    ""
-                )
-        );
-
-
-    /* SAVE */
-
-    document
-        .getElementById(
-            'saveEntryBtn'
-        )
-        ?.addEventListener(
-            'click',
-            () => {
-
-                const date =
-                    document.getElementById(
-                        'entryDate'
-                    ).value;
-
-
-                if (!date) {
-
-                    alert(
-                        "please select a date"
-                    );
-
-                    return;
-
-                }
-
-
-                const title =
-                    document.getElementById(
-                        'entryTitle'
-                    ).value.trim() ||
-                    "untitled";
-
-
-                const content =
-                    document.getElementById(
-                        'entryText'
-                    ).value.trim();
-
-
-                if (!content) {
-
-                    alert(
-                        "write something"
-                    );
-
-                    return;
-
-                }
-
-
-                diaryEntries.unshift({
-
-                    id: Date.now(),
-
-                    date: date,
-
-                    mood: selectedMood,
-
-                    title: title,
-
-                    content: content
-
-                });
-
-
-                saveAll();
-
-
-                document.getElementById(
-                    'entryTitle'
-                ).value = "";
-
-
-                document.getElementById(
-                    'entryText'
-                ).value = "";
-
-
-                setTodaysDate();
-
-            }
-        );
-
-
-    /* REFLECTION BUTTON */
-
-    document
-        .getElementById(
-            'refreshResponseBtn'
-        )
-        ?.addEventListener(
-            'click',
-            updateResponse
-        );
-
-
-    /* RESET */
-
-    document
-        .getElementById(
-            'resetAllBtn'
-        )
-        ?.addEventListener(
-            'click',
-            () => {
-
-                document.getElementById(
-                    'diaryView'
-                ).style.display =
-                    'none';
-
-
-                document.getElementById(
-                    'setupView'
-                ).style.display =
-                    'block';
-
-
-                currentUser = "";
-
-                diaryEntries = [];
-
-            }
-        );
-
-
-    /* WEATHER API */
-
-    async function getWeather() {
-
-        const cityInput =
-            document.getElementById(
-                'weatherCity'
-            );
-
-        const result =
-            document.getElementById(
-                'weatherResult'
-            );
-
-
-        const city =
-            cityInput.value.trim();
-
-
-        if (!city) {
-
-            result.innerHTML =
-                "🌷 please enter a city";
-
-            return;
-
-        }
-
-
-        result.innerHTML =
-            "☁️ checking the sky...";
-
-
-        try {
-
-            /*
-                STEP 1:
-                Convert city name into coordinates.
-            */
-
-            const locationResponse =
-                await fetch(
-                    `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
-                );
-
-
-            if (!locationResponse.ok) {
-
-                throw new Error(
-                    "location request failed"
-                );
-
-            }
-
-
-            const locationData =
-                await locationResponse.json();
-
-
-            if (
-                !locationData.results ||
-                locationData.results.length === 0
-            ) {
-
-                result.innerHTML =
-                    "🌷 couldn't find that city";
-
-                return;
-
-            }
-
-
-            const location =
-                locationData.results[0];
-
-
-            /*
-                STEP 2:
-                Get current weather.
-            */
-
-            const weatherResponse =
-                await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh`
-                );
-
-
-            if (!weatherResponse.ok) {
-
-                throw new Error(
-                    "weather request failed"
-                );
-
-            }
-
-
-            const weatherData =
-                await weatherResponse.json();
-
-
-            const current =
-                weatherData.current;
-
-
-            /*
-                STEP 3:
-                Convert weather codes
-                into readable descriptions.
-            */
-
-            const weatherDescriptions = {
-
-                0:
-                    "clear sky ☀️",
-
-                1:
-                    "mostly clear 🌤️",
-
-                2:
-                    "partly cloudy ⛅",
-
-                3:
-                    "overcast ☁️",
-
-                45:
-                    "foggy 🌫️",
-
-                48:
-                    "foggy 🌫️",
-
-                51:
-                    "light drizzle 🌦️",
-
-                53:
-                    "drizzle 🌦️",
-
-                55:
-                    "heavy drizzle 🌧️",
-
-                61:
-                    "light rain 🌦️",
-
-                63:
-                    "rain 🌧️",
-
-                65:
-                    "heavy rain 🌧️",
-
-                71:
-                    "light snow ❄️",
-
-                73:
-                    "snow ❄️",
-
-                75:
-                    "heavy snow ❄️",
-
-                80:
-                    "rain showers 🌦️",
-
-                81:
-                    "showers 🌧️",
-
-                82:
-                    "heavy showers 🌧️",
-
-                95:
-                    "thunderstorm ⛈️"
-
-            };
-
-
-            const description =
-                weatherDescriptions[
-                    current.weather_code
-                ] ||
-                "current conditions 🌷";
-
-
-            /*
-                STEP 4:
-                Display weather.
-            */
-
-            result.innerHTML = `
-
-                <strong class="weather-main-temp">
-                    ${Math.round(
-                        current.temperature_2m
-                    )}°C
-                </strong>
-
-                <br>
-
-                ${description}
-
-                <br>
-
-                <span style="font-size:0.75rem;">
-                    feels like
-                    ${Math.round(
-                        current.apparent_temperature
-                    )}°C
-                    · wind
-                    ${Math.round(
-                        current.wind_speed_10m
-                    )} km/h
-                </span>
-
-                <br>
-
-                <span style="font-size:0.7rem; color:#b8a9c2;">
-                    ${location.name},
-                    ${location.country}
-                </span>
-
-            `;
-
-        }
-
-
-        catch (error) {
-
-            console.error(
-                "Weather error:",
-                error
-            );
-
-
-            result.innerHTML =
-                "🌷 weather couldn't load right now — your diary is still safe.";
-
-        }
-
-    }
-
-
-    document
-        .getElementById(
-            'weatherBtn'
-        )
-        ?.addEventListener(
-            'click',
-            getWeather
-        );
-
-
-    /* INITIAL SCREEN */
-
-    document.getElementById(
-        'setupView'
-    ).style.display =
-        'block';
-
-
-    document.getElementById(
-        'diaryView'
-    ).style.display =
-        'none';
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>

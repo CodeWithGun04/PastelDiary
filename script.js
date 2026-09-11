@@ -44,36 +44,33 @@ const USER_NAME_KEY = "pastelDiaryUserName";
 const DIARY_NAME_KEY = "pastelDiaryName";
 const ENTRIES_KEY = "pastelDiaryEntries";
 
+
 let entries = [];
 let selectedMood = "";
 
 
-/* LOAD ENTRIES */
+/* BASIC SETUP */
 
 function loadEntries() {
 
     try {
 
-        const savedEntries =
-            localStorage.getItem(ENTRIES_KEY);
+        const savedEntries = localStorage.getItem(ENTRIES_KEY);
 
-        entries =
-            savedEntries
-                ? JSON.parse(savedEntries)
-                : [];
+        if (savedEntries) {
+            entries = JSON.parse(savedEntries);
+        } else {
+            entries = [];
+        }
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Could not load entries:", error);
 
         entries = [];
-
     }
-
 }
 
-
-/* SAVE ENTRIES */
 
 function saveEntriesToStorage() {
 
@@ -81,7 +78,6 @@ function saveEntriesToStorage() {
         ENTRIES_KEY,
         JSON.stringify(entries)
     );
-
 }
 
 
@@ -93,13 +89,11 @@ function showDiary() {
         localStorage.getItem(USER_NAME_KEY) || "";
 
     const diaryName =
-        localStorage.getItem(DIARY_NAME_KEY) ||
-        "pastel diary";
+        localStorage.getItem(DIARY_NAME_KEY) || "pastel diary";
 
 
     setupScreen.style.display = "none";
     diaryApp.style.display = "block";
-
 
     if (name) {
 
@@ -113,25 +107,13 @@ function showDiary() {
 
     }
 
-
     setToday();
 
     loadEntries();
 
     updateEverything();
 
-
-    /*
-       IMPORTANT:
-       Weather is started separately.
-       It cannot stop the diary from loading.
-    */
-
-    setTimeout(function () {
-
-        getWeather();
-
-    }, 100);
+    getWeather();
 
 }
 
@@ -141,7 +123,6 @@ function showDiary() {
 function showSetup() {
 
     setupScreen.style.display = "flex";
-
     diaryApp.style.display = "none";
 
 }
@@ -149,98 +130,80 @@ function showSetup() {
 
 /* START BUTTON */
 
-startButton.addEventListener(
-    "click",
-    function () {
+startButton.addEventListener("click", function () {
 
-        const name =
-            userNameInput.value.trim();
+    const name =
+        userNameInput.value.trim();
 
-        const diaryName =
-            diaryNameInput.value.trim();
+    const diaryName =
+        diaryNameInput.value.trim();
 
 
-        localStorage.setItem(
-            USER_NAME_KEY,
-            name
-        );
+    localStorage.setItem(
+        USER_NAME_KEY,
+        name
+    );
 
 
-        localStorage.setItem(
-            DIARY_NAME_KEY,
-            diaryName || "pastel diary"
-        );
+    localStorage.setItem(
+        DIARY_NAME_KEY,
+        diaryName || "pastel diary"
+    );
 
 
-        showDiary();
+    showDiary();
 
-    }
-);
+});
 
 
 /* SKIP BUTTON */
 
-skipButton.addEventListener(
-    "click",
-    function () {
+skipButton.addEventListener("click", function () {
 
-        localStorage.setItem(
-            USER_NAME_KEY,
-            ""
-        );
+    localStorage.setItem(
+        USER_NAME_KEY,
+        ""
+    );
 
 
-        localStorage.setItem(
-            DIARY_NAME_KEY,
-            "pastel diary"
-        );
+    localStorage.setItem(
+        DIARY_NAME_KEY,
+        "pastel diary"
+    );
 
 
-        showDiary();
+    showDiary();
 
-    }
-);
+});
 
 
 /* RESET */
 
-resetButton.addEventListener(
-    "click",
-    function () {
+resetButton.addEventListener("click", function () {
 
-        localStorage.removeItem(
-            USER_NAME_KEY
-        );
+    localStorage.removeItem(USER_NAME_KEY);
+    localStorage.removeItem(DIARY_NAME_KEY);
 
-        localStorage.removeItem(
-            DIARY_NAME_KEY
-        );
+    showSetup();
 
-
-        showSetup();
-
-    }
-);
+});
 
 
 /* DATE */
 
 function setToday() {
 
-    const today = new Date();
+    const today =
+        new Date();
 
     const year =
         today.getFullYear();
 
     const month =
-        String(
-            today.getMonth() + 1
-        ).padStart(2, "0");
+        String(today.getMonth() + 1).padStart(2, "0");
 
     const day =
-        String(
-            today.getDate()
-        ).padStart(2, "0");
+        String(today.getDate()).padStart(2, "0");
 
 
     entryDate.value =
@@ -257,41 +220,30 @@ const moodButtons =
 
 moodButtons.forEach(function (button) {
 
-    button.addEventListener(
-        "click",
-        function () {
+    button.addEventListener("click", function () {
 
-            moodButtons.forEach(
-                function (item) {
+        moodButtons.forEach(function (item) {
 
-                    item.classList.remove(
-                        "selected"
-                    );
+            item.classList.remove("selected");
 
-                }
-            );
+        });
 
 
-            button.classList.add(
-                "selected"
-            );
+        button.classList.add("selected");
 
 
-            selectedMood =
-                button.dataset.mood;
+        selectedMood =
+            button.dataset.mood;
 
 
-            currentMood.textContent =
-                selectedMood;
+        currentMood.textContent =
+            selectedMood;
 
 
-            moodMessage.textContent =
-                getMoodMessage(
-                    selectedMood
-                );
+        moodMessage.textContent =
+            getMoodMessage(selectedMood);
 
-        }
-    );
+    });
 
 });
 
@@ -337,113 +289,107 @@ function getMoodMessage(mood) {
 
 /* CHARACTER COUNT */
 
-entryContent.addEventListener(
-    "input",
-    function () {
+entryContent.addEventListener("input", function () {
 
-        const count =
-            entryContent.value.length;
+    const count =
+        entryContent.value.length;
 
 
-        characterCount.textContent =
-            `${count} characters`;
+    characterCount.textContent =
+        `${count} characters`;
 
-    }
-);
+});
 
 
 /* SAVE ENTRY */
 
-saveButton.addEventListener(
-    "click",
-    function () {
+saveButton.addEventListener("click", function () {
 
-        const title =
-            entryTitle.value.trim();
+    const title =
+        entryTitle.value.trim();
 
-        const content =
-            entryContent.value.trim();
+    const content =
+        entryContent.value.trim();
 
-        const date =
-            entryDate.value;
+    const date =
+        entryDate.value;
 
 
-        if (!content) {
+    if (!content) {
 
-            alert(
-                "Write something in your diary first ♡"
-            );
-
-            return;
-
-        }
-
-
-        const newEntry = {
-
-            id: Date.now(),
-
-            title:
-                title || "little thoughts",
-
-            content:
-                content,
-
-            mood:
-                selectedMood || "not selected",
-
-            date:
-                date
-
-        };
-
-
-        entries.unshift(newEntry);
-
-        saveEntriesToStorage();
-
-
-        entryTitle.value = "";
-
-        entryContent.value = "";
-
-        selectedMood = "";
-
-
-        moodButtons.forEach(
-            function (button) {
-
-                button.classList.remove(
-                    "selected"
-                );
-
-            }
+        alert(
+            "Write something in your diary first ♡"
         );
 
-
-        currentMood.textContent =
-            "not selected";
-
-
-        moodMessage.textContent =
-            "how are you feeling today?";
-
-
-        characterCount.textContent =
-            "0 characters";
-
-
-        updateEverything();
-
-
-        reflectionText.textContent =
-            "Your entry is saved ♡ Take a little moment to breathe and be proud of yourself for writing it down.";
+        return;
 
     }
-);
 
 
-/* UPDATE */
+    const newEntry = {
+
+        id:
+            Date.now(),
+
+        title:
+            title || "little thoughts",
+
+        content:
+            content,
+
+        mood:
+            selectedMood || "not selected",
+
+        date:
+            date,
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+
+    entries.unshift(newEntry);
+
+
+    saveEntriesToStorage();
+
+
+    entryTitle.value = "";
+    entryContent.value = "";
+
+    selectedMood = "";
+
+
+    moodButtons.forEach(function (button) {
+
+        button.classList.remove("selected");
+
+    });
+
+
+    currentMood.textContent =
+        "not selected";
+
+
+    moodMessage.textContent =
+        "how are you feeling today?";
+
+
+    characterCount.textContent =
+        "0 characters";
+
+
+    updateEverything();
+
+
+    reflectionText.textContent =
+        "Your entry is saved ♡ Take a little moment to breathe and be proud of yourself for writing it down.";
+
+});
+
+
+/* UPDATE EVERYTHING */
 
 function updateEverything() {
 
@@ -466,28 +412,24 @@ function updateStats() {
         entries.length;
 
 
+    const happyEntries =
+        entries.filter(function (entry) {
+
+            return entry.mood === "happy";
+
+        });
+
+
     happyCount.textContent =
-        entries.filter(
-            function (entry) {
-
-                return entry.mood === "happy";
-
-            }
-        ).length;
+        happyEntries.length;
 
 
     const total =
-        entries.reduce(
-            function (sum, entry) {
+        entries.reduce(function (sum, entry) {
 
-                return (
-                    sum +
-                    entry.content.length
-                );
+            return sum + entry.content.length;
 
-            },
-            0
-        );
+        }, 0);
 
 
     totalCharacters.textContent =
@@ -509,30 +451,21 @@ function updateStreak() {
     }
 
 
-    const dates =
-        [
-            ...new Set(
-                entries
-                    .map(
-                        function (entry) {
-                            return entry.date;
-                        }
-                    )
-                    .filter(Boolean)
-            )
-        ];
+    const uniqueDates =
+        [...new Set(
+            entries
+                .map(function (entry) {
+                    return entry.date;
+                })
+                .filter(Boolean)
+        )];
 
 
-    dates.sort(
-        function (a, b) {
+    uniqueDates.sort(function (a, b) {
 
-            return (
-                new Date(b) -
-                new Date(a)
-            );
+        return new Date(b) - new Date(a);
 
-        }
-    );
+    });
 
 
     let currentStreak = 1;
@@ -540,23 +473,20 @@ function updateStreak() {
 
     for (
         let i = 0;
-        i < dates.length - 1;
+        i < uniqueDates.length - 1;
         i++
     ) {
 
         const current =
-            new Date(dates[i]);
+            new Date(uniqueDates[i]);
 
-        const previous =
-            new Date(dates[i + 1]);
+        const next =
+            new Date(uniqueDates[i + 1]);
 
 
         const difference =
             Math.round(
-                (
-                    current -
-                    previous
-                ) /
+                (current - next) /
                 (1000 * 60 * 60 * 24)
             );
 
@@ -591,43 +521,30 @@ function updateEntries() {
 
 
     const filteredEntries =
-        entries.filter(
-            function (entry) {
+        entries.filter(function (entry) {
 
-                return (
+            return (
+                entry.title
+                    .toLowerCase()
+                    .includes(search) ||
 
-                    entry.title
-                        .toLowerCase()
-                        .includes(search)
+                entry.content
+                    .toLowerCase()
+                    .includes(search) ||
 
-                    ||
+                entry.mood
+                    .toLowerCase()
+                    .includes(search)
+            );
 
-                    entry.content
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    entry.mood
-                        .toLowerCase()
-                        .includes(search)
-
-                );
-
-            }
-        );
+        });
 
 
-    if (
-        filteredEntries.length === 0
-    ) {
+    if (filteredEntries.length === 0) {
 
         entriesList.innerHTML = `
-
             <div class="empty-state">
-
                 <span>🌸</span>
-
                 <p>
                     ${
                         search
@@ -635,9 +552,7 @@ function updateEntries() {
                             : "Your diary is waiting for its first little story."
                     }
                 </p>
-
             </div>
-
         `;
 
         return;
@@ -647,91 +562,85 @@ function updateEntries() {
 
     entriesList.innerHTML =
         filteredEntries
-            .map(
-                function (entry) {
+            .map(function (entry) {
 
-                    return `
+                return `
+                    <article class="entry">
 
-                        <article class="entry">
+                        <div class="entry-top">
 
-                            <div class="entry-top">
+                            <div>
 
-                                <div>
-
-                                    <div class="entry-title">
-                                        ${escapeHTML(entry.title)}
-                                    </div>
-
-                                    <div class="entry-date">
-                                        ${formatDate(entry.date)}
-                                    </div>
-
+                                <div class="entry-title">
+                                    ${escapeHTML(entry.title)}
                                 </div>
 
-                                <button
-                                    class="delete-entry"
-                                    type="button"
-                                    data-id="${entry.id}"
-                                >
-                                    delete
-                                </button>
+                                <div class="entry-date">
+                                    ${formatDate(entry.date)}
+                                </div>
 
                             </div>
 
-                            <div class="entry-mood">
-                                ${getMoodEmoji(entry.mood)}
-                                ${escapeHTML(entry.mood)}
-                            </div>
+                            <button
+                                class="delete-entry"
+                                type="button"
+                                data-id="${entry.id}"
+                            >
+                                delete
+                            </button>
 
-                            <div class="entry-content">
-                                ${escapeHTML(entry.content)}
-                            </div>
+                        </div>
 
-                        </article>
 
-                    `;
+                        <div class="entry-mood">
+                            ${getMoodEmoji(entry.mood)}
+                            ${escapeHTML(entry.mood)}
+                        </div>
 
-                }
-            )
+
+                        <div class="entry-content">
+                            ${escapeHTML(entry.content)}
+                        </div>
+
+                    </article>
+                `;
+
+            })
             .join("");
 
 
-    document
-        .querySelectorAll(".delete-entry")
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        const id =
-                            Number(
-                                button.dataset.id
-                            );
+    const deleteButtons =
+        document.querySelectorAll(".delete-entry");
 
 
-                        entries =
-                            entries.filter(
-                                function (entry) {
+    deleteButtons.forEach(function (button) {
 
-                                    return (
-                                        entry.id !== id
-                                    );
+        button.addEventListener(
+            "click",
+            function () {
 
-                                }
-                            );
+                const id =
+                    Number(button.dataset.id);
 
 
-                        saveEntriesToStorage();
+                entries =
+                    entries.filter(
+                        function (entry) {
 
-                        updateEverything();
+                            return entry.id !== id;
 
-                    }
-                );
+                        }
+                    );
+
+
+                saveEntriesToStorage();
+
+                updateEverything();
 
             }
         );
+
+    });
 
 }
 
@@ -753,25 +662,18 @@ searchInput.addEventListener(
 function updateGraph() {
 
     const latest =
-        entries
-            .slice(0, 7)
-            .reverse();
+        entries.slice(0, 7).reverse();
 
 
     if (latest.length === 0) {
 
         moodGraph.innerHTML = `
-
             <div class="empty-state">
-
                 <span>🌷</span>
-
                 <p>
                     your mood garden will grow here
                 </p>
-
             </div>
-
         `;
 
         return;
@@ -796,35 +698,29 @@ function updateGraph() {
 
     moodGraph.innerHTML =
         latest
-            .map(
-                function (entry) {
+            .map(function (entry) {
 
-                    const value =
-                        moodValues[
-                            entry.mood
-                        ] || 30;
+                const value =
+                    moodValues[entry.mood] || 30;
 
 
-                    return `
+                return `
+                    <div class="graph-item">
 
-                        <div class="graph-item">
+                        <div
+                            class="graph-bar"
+                            style="height: ${value}%"
+                            title="${escapeHTML(entry.mood)}"
+                        ></div>
 
-                            <div
-                                class="graph-bar"
-                                style="height: ${value}%"
-                                title="${escapeHTML(entry.mood)}"
-                            ></div>
-
-                            <div class="graph-label">
-                                ${getMoodEmoji(entry.mood)}
-                            </div>
-
+                        <div class="graph-label">
+                            ${getMoodEmoji(entry.mood)}
                         </div>
 
-                    `;
+                    </div>
+                `;
 
-                }
-            )
+            })
             .join("");
 
 }
@@ -906,13 +802,11 @@ reflectButton.addEventListener(
 
 /* WEATHER */
 
-function getWeather() {
+async function getWeather() {
 
-    /*
-       The app does NOT depend on this.
-       If location is unavailable, the diary
-       continues working normally.
-    */
+    weatherText.textContent =
+        "getting your weather...";
+
 
     if (!navigator.geolocation) {
 
@@ -927,18 +821,66 @@ function getWeather() {
     }
 
 
-    weatherText.textContent =
-        "checking weather...";
-
-
     navigator.geolocation.getCurrentPosition(
 
-        function (position) {
+        async function (position) {
 
-            loadWeather(
-                position.coords.latitude,
-                position.coords.longitude
-            );
+            const latitude =
+                position.coords.latitude;
+
+            const longitude =
+                position.coords.longitude;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Weather request failed"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                const temperature =
+                    Math.round(
+                        data.current.temperature_2m
+                    );
+
+
+                const code =
+                    data.current.weather_code;
+
+
+                weatherTemperature.textContent =
+                    `${temperature}°`;
+
+
+                weatherText.textContent =
+                    getWeatherDescription(code);
+
+            } catch (error) {
+
+                console.error(error);
+
+                weatherTemperature.textContent =
+                    "--°";
+
+                weatherText.textContent =
+                    "weather unavailable";
+
+            }
 
         },
 
@@ -948,14 +890,8 @@ function getWeather() {
                 "--°";
 
             weatherText.textContent =
-                "weather unavailable";
+                "location permission needed";
 
-        },
-
-        {
-            enableHighAccuracy: false,
-            timeout: 5000,
-            maximumAge: 600000
         }
 
     );
@@ -963,131 +899,42 @@ function getWeather() {
 }
 
 
-/* LOAD WEATHER */
-
-async function loadWeather(
-    latitude,
-    longitude
-) {
-
-    try {
-
-        const response =
-            await fetch(
-                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Weather request failed"
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const temperature =
-            Math.round(
-                data.current.temperature_2m
-            );
-
-
-        const code =
-            data.current.weather_code;
-
-
-        weatherTemperature.textContent =
-            `${temperature}°`;
-
-
-        weatherText.textContent =
-            getWeatherDescription(code);
-
-
-    } catch (error) {
-
-        console.error(
-            "Weather error:",
-            error
-        );
-
-
-        weatherTemperature.textContent =
-            "--°";
-
-
-        weatherText.textContent =
-            "weather unavailable";
-
-    }
-
-}
-
-
-/* WEATHER DESCRIPTION */
-
 function getWeatherDescription(code) {
 
     if (code === 0) {
-
         return "clear skies ☀️";
-
     }
-
 
     if (code <= 3) {
-
         return "a little cloudy ☁️";
-
     }
-
 
     if (code <= 48) {
-
         return "misty outside 🌫️";
-
     }
-
 
     if (code <= 67) {
-
         return "rainy today 🌧️";
-
     }
-
 
     if (code <= 77) {
-
         return "snowy outside ❄️";
-
     }
-
 
     if (code <= 82) {
-
         return "showers today 🌦️";
-
     }
-
 
     if (code <= 99) {
-
         return "stormy skies ⛈️";
-
     }
-
 
     return "weather today";
 
 }
 
 
-/* EMOJI */
+/* HELPERS */
 
 function getMoodEmoji(mood) {
 
@@ -1110,14 +957,10 @@ function getMoodEmoji(mood) {
 }
 
 
-/* DATE FORMAT */
-
 function formatDate(dateString) {
 
     if (!dateString) {
-
         return "";
-
     }
 
 
@@ -1139,41 +982,28 @@ function formatDate(dateString) {
 }
 
 
-/* SECURITY */
-
 function escapeHTML(value) {
 
     return String(value)
         .replace(/&/g, "&amp;")
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
 
-/* START */
+/* INITIAL LOAD */
 
 loadEntries();
 
 
+const savedUser =
+    localStorage.getItem(USER_NAME_KEY);
+
 const savedDiary =
-    localStorage.getItem(
-        DIARY_NAME_KEY
-    );
+    localStorage.getItem(DIARY_NAME_KEY);
 
 
 if (savedDiary) {

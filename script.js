@@ -10,7 +10,7 @@ import {
 
 const firebaseConfig = {
     apiKey: "AIzaSyAikl4RKUs6L31vAnoNTEj7Q0nSlgydQz4",
-    authDomain: "pasteldiary-h8m3pxx66-codewithgun04s-projects.vercel.app",
+    authDomain: "pasteldiary-61e12.firebaseapp.com",
     projectId: "pasteldiary-61e12",
     storageBucket: "pasteldiary-61e12.firebasestorage.app",
     messagingSenderId: "615784663317",

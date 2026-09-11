@@ -1,9 +1,70 @@
+/* =========================
+   FIREBASE
+========================= */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+
+
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyAikl4RKUs6L31vAnoNTEj7Q0nSlgydQz4",
+
+    authDomain:
+        "pasteldiary-61e12.firebaseapp.com",
+
+    projectId:
+        "pasteldiary-61e12",
+
+    storageBucket:
+        "pasteldiary-61e12.firebasestorage.app",
+
+    messagingSenderId:
+        "615784663317",
+
+    appId:
+        "1:615784663317:web:9576c7dd28c0f93343c11c"
+
+};
+
+
+const firebaseApp =
+    initializeApp(firebaseConfig);
+
+
+const auth =
+    getAuth(firebaseApp);
+
+
+const googleProvider =
+    new GoogleAuthProvider();
+
+
+/* =========================
+   GLOBAL VARIABLES
+========================= */
+
 let diaryEntries = [];
+
 let currentUser = "";
+
 let currentDiaryName = "";
+
 let lastResponse = "";
 
 let selectedMood = "🌸 soft";
+
+let firebaseUser = null;
 
 
 /* =========================
@@ -12,25 +73,43 @@ let selectedMood = "🌸 soft";
 
 function setTodaysDate() {
 
-    const today = new Date();
+    const today =
+        new Date();
 
-    const year = today.getFullYear();
+
+    const year =
+        today.getFullYear();
+
 
     const month =
-        String(today.getMonth() + 1).padStart(2, '0');
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0");
+
 
     const day =
-        String(today.getDate()).padStart(2, '0');
+        String(
+            today.getDate()
+        ).padStart(2, "0");
+
 
     const todayString =
         `${year}-${month}-${day}`;
 
+
     const dateInput =
-        document.getElementById('entryDate');
+        document.getElementById(
+            "entryDate"
+        );
+
 
     if (dateInput) {
-        dateInput.value = todayString;
+
+        dateInput.value =
+            todayString;
+
     }
+
 }
 
 
@@ -42,25 +121,27 @@ function getMoodValue(moodStr) {
 
     const map = {
 
-        '🌸 soft': 5,
+        "🌸 soft": 5,
 
-        '💖 hopeful': 4,
+        "💖 hopeful": 4,
 
-        '💔 heavy': 2,
+        "💔 heavy": 2,
 
-        '😔 sad': 2,
+        "😔 sad": 2,
 
-        '🫂 lonely': 1.5,
+        "🫂 lonely": 1.5,
 
-        '🌀 anxious': 2.5,
+        "🌀 anxious": 2.5,
 
-        '🌙 tired': 2,
+        "🌙 tired": 2,
 
-        '😤 angry': 2.8
+        "😤 angry": 2.8
 
     };
 
+
     return map[moodStr] || 3;
+
 }
 
 
@@ -77,132 +158,228 @@ function getSmartResponse(
     const lower =
         text.toLowerCase();
 
+
     const name =
         userName || "you";
+
 
     let emotion = null;
 
 
     if (
-        lower.includes('hopeless') ||
-        lower.includes('worthless') ||
-        lower.includes('numb') ||
-        lower.includes('nothing matters') ||
-        lower.includes('give up') ||
-        lower.includes('no point') ||
-        lower.includes('want to die') ||
-        lower.includes('end it')
+
+        lower.includes("hopeless") ||
+
+        lower.includes("worthless") ||
+
+        lower.includes("numb") ||
+
+        lower.includes("nothing matters") ||
+
+        lower.includes("give up") ||
+
+        lower.includes("no point") ||
+
+        lower.includes("want to die") ||
+
+        lower.includes("end it")
+
     ) {
 
-        emotion = "hopeless";
+        emotion =
+            "hopeless";
 
     }
 
+
     else if (
-        lower.includes('lonely') ||
-        lower.includes('alone') ||
-        lower.includes('akela') ||
-        lower.includes('nobody') ||
-        lower.includes('no one') ||
-        lower.includes('by myself') ||
-        lower.includes('isolated') ||
-        lower.includes('abandoned') ||
-        lower.includes('left out') ||
-        lower.includes('unseen') ||
-        lower.includes('invisible')
+
+        lower.includes("lonely") ||
+
+        lower.includes("alone") ||
+
+        lower.includes("akela") ||
+
+        lower.includes("nobody") ||
+
+        lower.includes("no one") ||
+
+        lower.includes("by myself") ||
+
+        lower.includes("isolated") ||
+
+        lower.includes("abandoned") ||
+
+        lower.includes("left out") ||
+
+        lower.includes("unseen") ||
+
+        lower.includes("invisible")
+
     ) {
 
-        emotion = "lonely";
+        emotion =
+            "lonely";
 
     }
 
+
     else if (
-        lower.includes('sad') ||
-        lower.includes('depressed') ||
-        lower.includes('heartbroken') ||
-        lower.includes('grief') ||
-        lower.includes('hurt') ||
-        lower.includes('pain') ||
-        lower.includes('crying') ||
-        lower.includes('tears') ||
-        lower.includes('empty') ||
-        lower.includes('miserable') ||
-        lower.includes('unhappy') ||
-        lower.includes('down') ||
-        lower.includes('low')
+
+        lower.includes("sad") ||
+
+        lower.includes("depressed") ||
+
+        lower.includes("heartbroken") ||
+
+        lower.includes("grief") ||
+
+        lower.includes("hurt") ||
+
+        lower.includes("pain") ||
+
+        lower.includes("crying") ||
+
+        lower.includes("tears") ||
+
+        lower.includes("empty") ||
+
+        lower.includes("miserable") ||
+
+        lower.includes("unhappy") ||
+
+        lower.includes("down") ||
+
+        lower.includes("low")
+
     ) {
 
-        emotion = "sad";
+        emotion =
+            "sad";
 
     }
 
+
     else if (
-        lower.includes('anxious') ||
-        lower.includes('anxiety') ||
-        lower.includes('nervous') ||
-        lower.includes('worry') ||
-        lower.includes('worried') ||
-        lower.includes('stressed') ||
-        lower.includes('panic') ||
-        lower.includes('overthinking') ||
-        lower.includes('scared') ||
-        lower.includes('fear') ||
-        lower.includes('dread') ||
-        lower.includes('restless') ||
-        lower.includes('uneasy')
+
+        lower.includes("anxious") ||
+
+        lower.includes("anxiety") ||
+
+        lower.includes("nervous") ||
+
+        lower.includes("worry") ||
+
+        lower.includes("worried") ||
+
+        lower.includes("stressed") ||
+
+        lower.includes("panic") ||
+
+        lower.includes("overthinking") ||
+
+        lower.includes("scared") ||
+
+        lower.includes("fear") ||
+
+        lower.includes("dread") ||
+
+        lower.includes("restless") ||
+
+        lower.includes("uneasy")
+
     ) {
 
-        emotion = "anxious";
+        emotion =
+            "anxious";
 
     }
 
+
     else if (
-        lower.includes('angry') ||
-        lower.includes('mad') ||
-        lower.includes('frustrated') ||
-        lower.includes('rage') ||
-        lower.includes('annoyed') ||
-        lower.includes('fed up') ||
-        lower.includes('sick of') ||
-        lower.includes('pissed') ||
-        lower.includes('resentful') ||
-        lower.includes('bitter')
+
+        lower.includes("angry") ||
+
+        lower.includes("mad") ||
+
+        lower.includes("frustrated") ||
+
+        lower.includes("rage") ||
+
+        lower.includes("annoyed") ||
+
+        lower.includes("fed up") ||
+
+        lower.includes("sick of") ||
+
+        lower.includes("pissed") ||
+
+        lower.includes("resentful") ||
+
+        lower.includes("bitter")
+
     ) {
 
-        emotion = "angry";
+        emotion =
+            "angry";
 
     }
 
+
     else if (
-        lower.includes('tired') ||
-        lower.includes('exhausted') ||
-        lower.includes('drained') ||
-        lower.includes('burnout') ||
-        lower.includes('no energy') ||
-        lower.includes('sleepy') ||
-        lower.includes('fatigued') ||
-        lower.includes('worn out') ||
-        lower.includes('burnt out')
+
+        lower.includes("tired") ||
+
+        lower.includes("exhausted") ||
+
+        lower.includes("drained") ||
+
+        lower.includes("burnout") ||
+
+        lower.includes("no energy") ||
+
+        lower.includes("sleepy") ||
+
+        lower.includes("fatigued") ||
+
+        lower.includes("worn out") ||
+
+        lower.includes("burnt out")
+
     ) {
 
-        emotion = "tired";
+        emotion =
+            "tired";
 
     }
 
+
     else if (
-        lower.includes('happy') ||
-        lower.includes('joy') ||
-        lower.includes('grateful') ||
-        lower.includes('blessed') ||
-        lower.includes('good day') ||
-        lower.includes('peaceful') ||
-        lower.includes('calm') ||
-        lower.includes('content') ||
-        lower.includes('wonderful') ||
-        lower.includes('amazing')
+
+        lower.includes("happy") ||
+
+        lower.includes("joy") ||
+
+        lower.includes("grateful") ||
+
+        lower.includes("blessed") ||
+
+        lower.includes("good day") ||
+
+        lower.includes("peaceful") ||
+
+        lower.includes("calm") ||
+
+        lower.includes("content") ||
+
+        lower.includes("wonderful") ||
+
+        lower.includes("amazing")
+
     ) {
 
-        emotion = "hopeful";
+        emotion =
+            "hopeful";
 
     }
 
@@ -219,6 +396,7 @@ function getSmartResponse(
             `🖤 ${name}, I'm really glad you wrote this. Hopelessness can make the future feel fixed, but feelings can change. Please reach out to someone you trust and let them know how you're feeling.`,
 
             `🖤 ${name}, thank you for being honest about feeling this way. That takes courage. Please talk to someone you trust today. You deserve support.`
+
         ];
 
     }
@@ -233,6 +411,7 @@ function getSmartResponse(
             `🫂 ${name}, feeling unseen is one of the heaviest feelings. Thank you for trusting this space with it. You're not as alone as it feels right now.`,
 
             `🫂 ${name}, loneliness can convince us that nobody sees us or cares. But you showed up here. That's proof that some part of you still believes in being heard.`
+
         ];
 
     }
@@ -247,6 +426,7 @@ function getSmartResponse(
             `🌧️ ${name}, I notice the weight in your words. Sadness isn't weakness - it's proof that you care deeply about something. What's on your heart right now?`,
 
             `🌧️ ${name}, some days are just heavy. There's no need to fix everything at once. But you writing it down means you're not running from it.`
+
         ];
 
     }
@@ -261,6 +441,7 @@ function getSmartResponse(
             `🌀 ${name}, overthinking is often your brain trying to protect you. That's not weakness. Take one slow breath. Just one. You've got this.`,
 
             `🌀 ${name}, worry has a loud voice. But you writing it down? That's you taking some power back. What's one small thing that feels certain right now?`
+
         ];
 
     }
@@ -275,6 +456,7 @@ function getSmartResponse(
             `😤 ${name}, I hear the frustration. Anger sometimes tells us that something matters deeply to us. What would feel fair to you?`,
 
             `😤 ${name}, you're angry, and that's information. Now the question is: what action would actually help you?`
+
         ];
 
     }
@@ -289,6 +471,7 @@ function getSmartResponse(
             `🌙 ${name}, burnout is real. Pushing through without rest doesn't make you stronger. What's one small thing you can remove from your plate today?`,
 
             `🌙 ${name}, being tired all the time isn't a personality flaw. It's a signal that something is draining you. You deserve rest.`
+
         ];
 
     }
@@ -303,6 +486,7 @@ function getSmartResponse(
             `☀️ ${name}, I'm glad you're sharing a softer moment. These aren't silly - they're anchors. Come back to this feeling when things get hard.`,
 
             `☀️ ${name}, you wrote about something good. That's not nothing. Feelings change, and good moments deserve to be noticed too.`
+
         ];
 
     }
@@ -317,6 +501,7 @@ function getSmartResponse(
             `📝 ${name}, thanks for writing. Not every entry has to be a big emotional release. Sometimes just documenting the day is enough.`,
 
             `📝 ${name}, I see you. You took a moment to check in with yourself. That's worth something.`
+
         ];
 
     }
@@ -324,16 +509,21 @@ function getSmartResponse(
 
     let randomIndex =
         Math.floor(
-            Math.random() * responsePool.length
+            Math.random() *
+            responsePool.length
         );
+
 
     let response =
         responsePool[randomIndex];
 
 
     if (
+
         allEntries.length >= 7 &&
+
         emotion !== "hopeless"
+
     ) {
 
         response +=
@@ -343,13 +533,17 @@ function getSmartResponse(
 
 
     if (
+
         response === lastResponse &&
+
         responsePool.length > 1
+
     ) {
 
         randomIndex =
             (randomIndex + 1) %
             responsePool.length;
+
 
         response =
             responsePool[randomIndex];
@@ -357,9 +551,12 @@ function getSmartResponse(
     }
 
 
-    lastResponse = response;
+    lastResponse =
+        response;
+
 
     return response;
+
 }
 
 
@@ -370,9 +567,13 @@ function getSmartResponse(
 function updateResponse() {
 
     const responseBox =
-        document.getElementById('responseBox');
+        document.getElementById(
+            "responseBox"
+        );
 
-    if (!responseBox) return;
+
+    if (!responseBox)
+        return;
 
 
     if (diaryEntries.length === 0) {
@@ -381,6 +582,7 @@ function updateResponse() {
             `✨ write something, ${currentUser || "you"} — I'll read it carefully.`;
 
         return;
+
     }
 
 
@@ -389,9 +591,7 @@ function updateResponse() {
 
 
     const fullText =
-        (latestEntry.title || "") +
-        " " +
-        (latestEntry.content || "");
+        `${latestEntry.title || ""} ${latestEntry.content || ""}`;
 
 
     const response =
@@ -404,7 +604,8 @@ function updateResponse() {
 
     responseBox.innerHTML =
         escapeHtml(response)
-            .replace(/\n/g, '<br>');
+            .replace(/\n/g, "<br>");
+
 }
 
 
@@ -416,19 +617,23 @@ function renderMoodGraph() {
 
     const container =
         document.getElementById(
-            'moodGraphContainer'
+            "moodGraphContainer"
         );
 
 
-    if (!container) return;
+    if (!container)
+        return;
 
 
     if (!diaryEntries.length) {
 
         container.innerHTML =
-            '<div class="no-graph">📝 write entries to see your mood graph</div>';
+            `<div class="no-graph">
+                📝 write entries to see your mood graph
+            </div>`;
 
         return;
+
     }
 
 
@@ -438,13 +643,8 @@ function renderMoodGraph() {
             .reverse();
 
 
-    const maxValue = 5;
-
-    const minValue = 1;
-
-
     let html =
-        '<div class="bars">';
+        `<div class="bars">`;
 
 
     for (
@@ -458,13 +658,16 @@ function renderMoodGraph() {
 
 
         const moodValue =
-            getMoodValue(entry.mood);
+            getMoodValue(
+                entry.mood
+            );
 
 
         const heightPercent =
-            ((moodValue - minValue) /
-            (maxValue - minValue)) *
-            120;
+            (
+                (moodValue - 1) /
+                4
+            ) * 120;
 
 
         const barHeight =
@@ -479,7 +682,7 @@ function renderMoodGraph() {
 
         const moodEmoji =
             (entry.mood || "🌸")
-                .split(' ')[0];
+                .split(" ")[0];
 
 
         const shortDate =
@@ -488,12 +691,14 @@ function renderMoodGraph() {
 
         let barColor =
             moodValue >= 4
-                ? 'linear-gradient(180deg, #e8c4e0, #c8a8dc)'
-                : (
-                    moodValue >= 2.5
-                        ? 'linear-gradient(180deg, #d4c0e8, #b89bc4)'
-                        : 'linear-gradient(180deg, #c4b0d4, #a088b0)'
-                );
+
+                ? "linear-gradient(180deg, #e8c4e0, #c8a8dc)"
+
+                : moodValue >= 2.5
+
+                    ? "linear-gradient(180deg, #d4c0e8, #b89bc4)"
+
+                    : "linear-gradient(180deg, #c4b0d4, #a088b0)";
 
 
         html += `
@@ -519,10 +724,12 @@ function renderMoodGraph() {
             </div>
 
         `;
+
     }
 
 
     html += `
+
         </div>
 
         <div
@@ -535,11 +742,13 @@ function renderMoodGraph() {
         >
             ↑ higher = lighter · lower = heavier
         </div>
+
     `;
 
 
     container.innerHTML =
         html;
+
 }
 
 
@@ -551,41 +760,48 @@ function updateStats() {
 
     const statEntries =
         document.getElementById(
-            'statEntries'
+            "statEntries"
         );
+
+
+    if (!statEntries)
+        return;
+
 
     const statStreak =
         document.getElementById(
-            'statStreak'
+            "statStreak"
         );
+
 
     const statWeek =
         document.getElementById(
-            'statWeek'
+            "statWeek"
         );
+
 
     const statMood =
         document.getElementById(
-            'statMood'
+            "statMood"
         );
+
 
     const statWords =
         document.getElementById(
-            'statWords'
+            "statWords"
         );
+
 
     const statAverage =
         document.getElementById(
-            'statAverage'
+            "statAverage"
         );
+
 
     const moodSummary =
         document.getElementById(
-            'moodSummary'
+            "moodSummary"
         );
-
-
-    if (!statEntries) return;
 
 
     statEntries.innerText =
@@ -594,26 +810,25 @@ function updateStats() {
 
     if (diaryEntries.length === 0) {
 
-        statStreak.innerText = '0';
+        statStreak.innerText = "0";
 
-        statWeek.innerText = '0';
+        statWeek.innerText = "0";
 
-        statMood.innerText = '—';
+        statMood.innerText = "—";
 
-        statWords.innerText = '0';
+        statWords.innerText = "0";
 
-        statAverage.innerText = '—';
+        statAverage.innerText = "—";
 
         moodSummary.innerText =
-            '🌷 your mood story will appear here';
+            "🌷 your mood story will appear here";
 
         return;
+
     }
 
 
-    /* =====================
-       STREAK
-    ===================== */
+    /* STREAK */
 
     const uniqueDates = [
 
@@ -638,6 +853,7 @@ function updateStats() {
     ) {
 
         const diff =
+
             (
                 new Date(
                     uniqueDates[i]
@@ -646,6 +862,7 @@ function updateStats() {
                 new Date(
                     uniqueDates[i + 1]
                 )
+
             ) /
 
             (1000 * 3600 * 24);
@@ -655,11 +872,14 @@ function updateStats() {
 
             streak++;
 
-        } else {
+        }
+
+        else {
 
             break;
 
         }
+
     }
 
 
@@ -667,9 +887,7 @@ function updateStats() {
         streak;
 
 
-    /* =====================
-       LAST 7 DAYS
-    ===================== */
+    /* LAST 7 DAYS */
 
     const today =
         new Date();
@@ -712,11 +930,13 @@ function updateStats() {
 
 
                 return (
+
                     entryDate >=
                     sevenDaysAgo &&
 
                     entryDate <=
                     today
+
                 );
 
             }
@@ -727,9 +947,7 @@ function updateStats() {
         weekEntries.length;
 
 
-    /* =====================
-       MOST COMMON MOOD
-    ===================== */
+    /* MOST COMMON MOOD */
 
     const moodCounts = {};
 
@@ -750,9 +968,12 @@ function updateStats() {
     );
 
 
-    let mostCommonMood = "";
+    let mostCommonMood =
+        "";
 
-    let highestCount = 0;
+
+    let highestCount =
+        0;
 
 
     Object.keys(
@@ -768,8 +989,10 @@ function updateStats() {
                 highestCount =
                     moodCounts[mood];
 
+
                 mostCommonMood =
                     mood;
+
             }
 
         }
@@ -778,13 +1001,11 @@ function updateStats() {
 
     statMood.innerText =
         mostCommonMood
-            ? mostCommonMood.split(' ')[0]
-            : '—';
+            ? mostCommonMood.split(" ")[0]
+            : "—";
 
 
-    /* =====================
-       WORD COUNT
-    ===================== */
+    /* WORD COUNT */
 
     const totalWords =
         diaryEntries.reduce(
@@ -811,9 +1032,7 @@ function updateStats() {
         totalWords;
 
 
-    /* =====================
-       AVERAGE MOOD
-    ===================== */
+    /* AVERAGE MOOD */
 
     const totalMoodValue =
         diaryEntries.reduce(
@@ -840,16 +1059,14 @@ function updateStats() {
         averageMood.toFixed(1);
 
 
-    /* =====================
-       MOOD SUMMARY
-    ===================== */
+    /* SUMMARY */
 
     const moodName =
         mostCommonMood
             ? mostCommonMood
-                .split(' ')
+                .split(" ")
                 .slice(1)
-                .join(' ')
+                .join(" ")
             : "soft";
 
 
@@ -880,6 +1097,7 @@ function updateStats() {
 
     moodSummary.innerText =
         summary;
+
 }
 
 
@@ -891,19 +1109,21 @@ function renderEntries() {
 
     const container =
         document.getElementById(
-            'entriesFeed'
+            "entriesFeed"
         );
 
 
-    if (!container) return;
+    if (!container)
+        return;
 
 
     if (diaryEntries.length === 0) {
 
         container.innerHTML =
-            '— nothing yet. —';
+            "— nothing yet. —";
 
         return;
+
     }
 
 
@@ -926,7 +1146,7 @@ function renderEntries() {
                 ? entry.content.slice(
                     0,
                     120
-                ) + '…'
+                ) + "…"
 
                 : entry.content;
 
@@ -950,7 +1170,7 @@ function renderEntries() {
                 >
                     ${escapeHtml(entry.date)}
                     ·
-                    ${escapeHtml(entry.mood || '🌸')}
+                    ${escapeHtml(entry.mood || "🌸")}
                 </div>
 
                 <div
@@ -961,7 +1181,7 @@ function renderEntries() {
                 >
                     ${escapeHtml(
                         entry.title ||
-                        'untitled'
+                        "untitled"
                     )}
                 </div>
 
@@ -972,6 +1192,7 @@ function renderEntries() {
             </div>
 
         `;
+
     }
 
 
@@ -980,18 +1201,18 @@ function renderEntries() {
 
 
     document
-        .querySelectorAll('.delete-btn')
+        .querySelectorAll(".delete-btn")
         .forEach(
             button => {
 
                 button.addEventListener(
-                    'click',
+                    "click",
                     () => {
 
                         const id =
                             parseInt(
                                 button.getAttribute(
-                                    'data-id'
+                                    "data-id"
                                 )
                             );
 
@@ -1010,6 +1231,7 @@ function renderEntries() {
 
             }
         );
+
 }
 
 
@@ -1019,28 +1241,31 @@ function renderEntries() {
 
 function escapeHtml(str) {
 
-    if (!str) return '';
+    if (!str)
+        return "";
 
 
     return String(str).replace(
         /[&<>"]/g,
         character => {
 
-            if (character === '&')
-                return '&amp;';
+            if (character === "&")
+                return "&amp;";
 
-            if (character === '<')
-                return '&lt;';
+            if (character === "<")
+                return "&lt;";
 
-            if (character === '>')
-                return '&gt;';
+            if (character === ">")
+                return "&gt;";
 
             if (character === '"')
-                return '&quot;';
+                return "&quot;";
 
             return character;
+
         }
     );
+
 }
 
 
@@ -1065,6 +1290,7 @@ function saveAll() {
     renderMoodGraph();
 
     updateResponse();
+
 }
 
 
@@ -1103,6 +1329,7 @@ function loadUser() {
     renderMoodGraph();
 
     updateResponse();
+
 }
 
 
@@ -1113,46 +1340,49 @@ function loadUser() {
 function bindMoods() {
 
     document
-        .querySelectorAll('.mood')
+        .querySelectorAll(".mood")
         .forEach(
             mood => {
 
                 mood.removeEventListener(
-                    'click',
+                    "click",
                     moodClick
                 );
 
+
                 mood.addEventListener(
-                    'click',
+                    "click",
                     moodClick
                 );
 
             }
         );
+
 }
 
 
 function moodClick() {
 
     document
-        .querySelectorAll('.mood')
+        .querySelectorAll(".mood")
         .forEach(
             mood =>
                 mood.classList.remove(
-                    'selected'
+                    "selected"
                 )
         );
 
 
     this.classList.add(
-        'selected'
+        "selected"
     );
 
 
     selectedMood =
         this.getAttribute(
-            'data-mood'
+            "data-mood"
         );
+
 }
 
 
@@ -1181,13 +1411,13 @@ function initDiary(
 
 
         document.getElementById(
-            'mainTitle'
+            "mainTitle"
         ).innerHTML =
             `🕯️ ${escapeHtml(nick)}`;
 
 
         document.getElementById(
-            'mainSub'
+            "mainSub"
         ).innerHTML =
             `a soft place for ${escapeHtml(currentUser)}`;
 
@@ -1200,15 +1430,15 @@ function initDiary(
 
 
         document.getElementById(
-            'mainTitle'
+            "mainTitle"
         ).innerHTML =
             `🕯️ ${escapeHtml(currentUser)}'s corner`;
 
 
         document.getElementById(
-            'mainSub'
+            "mainSub"
         ).innerHTML =
-            `a soft place to write`;
+            "a soft place to write";
 
     }
 
@@ -1217,15 +1447,15 @@ function initDiary(
 
 
     document.getElementById(
-        'setupView'
+        "setupView"
     ).style.display =
-        'none';
+        "none";
 
 
     document.getElementById(
-        'diaryView'
+        "diaryView"
     ).style.display =
-        'block';
+        "block";
 
 
     setTodaysDate();
@@ -1235,25 +1465,195 @@ function initDiary(
 
 
     document
-        .querySelectorAll('.mood')
+        .querySelectorAll(".mood")
         .forEach(
             mood =>
                 mood.classList.remove(
-                    'selected'
+                    "selected"
                 )
         );
 
 
     document
-        .querySelector('.mood')
+        .querySelector(".mood")
         ?.classList.add(
-            'selected'
+            "selected"
         );
 
 
     selectedMood =
         "🌸 soft";
+
 }
+
+
+/* =========================
+   GOOGLE AUTH
+========================= */
+
+async function signInWithGoogle() {
+
+    const button =
+        document.getElementById(
+            "googleSignInBtn"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.innerText =
+            "✨ signing you in...";
+
+    }
+
+
+    try {
+
+        const result =
+            await signInWithPopup(
+                auth,
+                googleProvider
+            );
+
+
+        const user =
+            result.user;
+
+
+        firebaseUser =
+            user;
+
+
+        currentUser =
+            user.displayName ||
+            "friend";
+
+
+        document.getElementById(
+            "userName"
+        ).value =
+            currentUser;
+
+
+        document.getElementById(
+            "diaryNick"
+        ).value =
+            "my little diary";
+
+
+        initDiary(
+            currentUser,
+            "my little diary"
+        );
+
+
+        console.log(
+            "Google sign-in successful:",
+            user.email
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Google sign-in error:",
+            error
+        );
+
+
+        if (
+            error.code ===
+            "auth/popup-closed-by-user"
+        ) {
+
+            alert(
+                "Google sign-in was cancelled."
+            );
+
+        }
+
+        else if (
+            error.code ===
+            "auth/popup-blocked"
+        ) {
+
+            alert(
+                "Your browser blocked the Google sign-in popup. Please allow popups for PastelDiary and try again."
+            );
+
+        }
+
+        else {
+
+            alert(
+                "Google sign-in could not be completed. Please try again."
+            );
+
+        }
+
+    }
+
+
+    finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.innerText =
+                "✨ Continue with Google";
+
+        }
+
+    }
+
+}
+
+
+/* =========================
+   GOOGLE AUTH BUTTON
+========================= */
+
+document
+    .getElementById(
+        "googleSignInBtn"
+    )
+    ?.addEventListener(
+        "click",
+        signInWithGoogle
+    );
+
+
+/* =========================
+   AUTH STATE
+========================= */
+
+onAuthStateChanged(
+    auth,
+    user => {
+
+        firebaseUser =
+            user || null;
+
+
+        if (user) {
+
+            console.log(
+                "Firebase user:",
+                user.displayName,
+                user.email
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================
@@ -1262,15 +1662,15 @@ function initDiary(
 
 document
     .getElementById(
-        'startDiaryBtn'
+        "startDiaryBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         () => {
 
             const name =
                 document.getElementById(
-                    'userName'
+                    "userName"
                 ).value;
 
 
@@ -1281,13 +1681,14 @@ document
                 );
 
                 return;
+
             }
 
 
             initDiary(
                 name,
                 document.getElementById(
-                    'diaryNick'
+                    "diaryNick"
                 ).value
             );
 
@@ -1301,10 +1702,10 @@ document
 
 document
     .getElementById(
-        'guestStartBtn'
+        "guestStartBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         () => {
 
             initDiary(
@@ -1322,15 +1723,15 @@ document
 
 document
     .getElementById(
-        'saveEntryBtn'
+        "saveEntryBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         () => {
 
             const date =
                 document.getElementById(
-                    'entryDate'
+                    "entryDate"
                 ).value;
 
 
@@ -1341,19 +1742,20 @@ document
                 );
 
                 return;
+
             }
 
 
             const title =
                 document.getElementById(
-                    'entryTitle'
+                    "entryTitle"
                 ).value.trim() ||
                 "untitled";
 
 
             const content =
                 document.getElementById(
-                    'entryText'
+                    "entryText"
                 ).value.trim();
 
 
@@ -1364,6 +1766,7 @@ document
                 );
 
                 return;
+
             }
 
 
@@ -1386,12 +1789,12 @@ document
 
 
             document.getElementById(
-                'entryTitle'
+                "entryTitle"
             ).value = "";
 
 
             document.getElementById(
-                'entryText'
+                "entryText"
             ).value = "";
 
 
@@ -1407,10 +1810,10 @@ document
 
 document
     .getElementById(
-        'refreshResponseBtn'
+        "refreshResponseBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         updateResponse
     );
 
@@ -1421,10 +1824,10 @@ document
 
 document
     .getElementById(
-        'resetAllBtn'
+        "resetAllBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         () => {
 
             const shouldReset =
@@ -1433,19 +1836,20 @@ document
                 );
 
 
-            if (!shouldReset) return;
+            if (!shouldReset)
+                return;
 
 
             document.getElementById(
-                'diaryView'
+                "diaryView"
             ).style.display =
-                'none';
+                "none";
 
 
             document.getElementById(
-                'setupView'
+                "setupView"
             ).style.display =
-                'block';
+                "block";
 
 
             currentUser = "";
@@ -1465,24 +1869,25 @@ document
 
 /* =========================
    WEATHER
-   Open-Meteo
+   OPEN-METEO
 ========================= */
 
 async function getWeather() {
 
     const cityInput =
         document.getElementById(
-            'weatherCity'
+            "weatherCity"
         );
 
 
     const result =
         document.getElementById(
-            'weatherResult'
+            "weatherResult"
         );
 
 
-    if (!cityInput || !result) return;
+    if (!cityInput || !result)
+        return;
 
 
     const city =
@@ -1492,14 +1897,15 @@ async function getWeather() {
     if (!city) {
 
         result.innerHTML =
-            '🌷 please enter a city first.';
+            "🌷 please enter a city first.";
 
         return;
+
     }
 
 
     result.innerHTML =
-        '☁️ checking the weather...';
+        "☁️ checking the weather...";
 
 
     try {
@@ -1513,7 +1919,7 @@ async function getWeather() {
         if (!geoResponse.ok) {
 
             throw new Error(
-                'location search failed'
+                "location search failed"
             );
 
         }
@@ -1529,9 +1935,10 @@ async function getWeather() {
         ) {
 
             result.innerHTML =
-                '🌷 I could not find that city. Try another spelling.';
+                "🌷 I could not find that city. Try another spelling.";
 
             return;
+
         }
 
 
@@ -1539,24 +1946,16 @@ async function getWeather() {
             geoData.results[0];
 
 
-        const latitude =
-            location.latitude;
-
-
-        const longitude =
-            location.longitude;
-
-
         const weatherResponse =
             await fetch(
-                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`
+                `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`
             );
 
 
         if (!weatherResponse.ok) {
 
             throw new Error(
-                'weather request failed'
+                "weather request failed"
             );
 
         }
@@ -1594,20 +1993,6 @@ async function getWeather() {
             );
 
 
-        const placeName =
-            escapeHtml(
-                location.name
-            );
-
-
-        const country =
-            location.country
-                ? escapeHtml(
-                    location.country
-                )
-                : "";
-
-
         result.innerHTML = `
 
             <div style="font-size:1.8rem;">
@@ -1621,7 +2006,13 @@ async function getWeather() {
                     margin-top:4px;
                 "
             >
-                ${placeName}${country ? ', ' + country : ''}
+                ${escapeHtml(location.name)}
+                ${location.country
+                    ? ", " +
+                      escapeHtml(
+                          location.country
+                      )
+                    : ""}
             </div>
 
             <div
@@ -1645,12 +2036,14 @@ async function getWeather() {
                     margin-top:5px;
                 "
             >
-                feels like ${feelsLike}°C · wind ${windSpeed} km/h
+                feels like ${feelsLike}°C
+                · wind ${windSpeed} km/h
             </div>
 
         `;
 
     }
+
 
     catch (error) {
 
@@ -1661,9 +2054,10 @@ async function getWeather() {
 
 
         result.innerHTML =
-            '🌧️ weather could not be loaded right now. please try again.';
+            "🌧️ weather could not be loaded right now. please try again.";
 
     }
+
 }
 
 
@@ -1790,10 +2184,12 @@ function getWeatherDescription(
 
             emoji: "🌤️",
 
-            text: "weather conditions available"
+            text:
+                "weather conditions available"
 
         }
     );
+
 }
 
 
@@ -1803,10 +2199,10 @@ function getWeatherDescription(
 
 document
     .getElementById(
-        'weatherBtn'
+        "weatherBtn"
     )
     ?.addEventListener(
-        'click',
+        "click",
         getWeather
     );
 
@@ -1817,14 +2213,14 @@ document
 
 document
     .getElementById(
-        'weatherCity'
+        "weatherCity"
     )
     ?.addEventListener(
-        'keydown',
+        "keydown",
         event => {
 
             if (
-                event.key === 'Enter'
+                event.key === "Enter"
             ) {
 
                 getWeather();
@@ -1840,12 +2236,12 @@ document
 ========================= */
 
 document.getElementById(
-    'setupView'
+    "setupView"
 ).style.display =
-    'block';
+    "block";
 
 
 document.getElementById(
-    'diaryView'
+    "diaryView"
 ).style.display =
-    'none';
+    "none";

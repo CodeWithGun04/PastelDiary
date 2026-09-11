@@ -47,10 +47,31 @@ let currentDiaryName = "";
 
 
 /* =========================
+   SCREEN CONTROL
+========================= */
+
+function showDiary() {
+
+    setupScreen.style.display = "none";
+    diaryApp.style.display = "block";
+
+}
+
+
+function showSetup() {
+
+    diaryApp.style.display = "none";
+    setupScreen.style.display = "flex";
+
+}
+
+
+/* =========================
    LOCAL STORAGE
 ========================= */
 
 function saveToStorage() {
+
     localStorage.setItem(
         "pastelDiaryEntries",
         JSON.stringify(diaryEntries)
@@ -65,6 +86,7 @@ function saveToStorage() {
         "pastelDiaryName",
         currentDiaryName
     );
+
 }
 
 
@@ -83,21 +105,31 @@ function loadFromStorage() {
     if (savedEntries) {
 
         try {
-            diaryEntries = JSON.parse(savedEntries);
-        } catch (error) {
+
+            diaryEntries =
+                JSON.parse(savedEntries);
+
+        } catch {
+
             diaryEntries = [];
+
         }
 
     }
 
 
     if (savedUser) {
+
         currentUser = savedUser;
+
     }
 
 
     if (savedDiaryName) {
-        currentDiaryName = savedDiaryName;
+
+        currentDiaryName =
+            savedDiaryName;
+
     }
 
 }
@@ -109,13 +141,7 @@ function loadFromStorage() {
 
 function openDiary() {
 
-    setupScreen.style.display = "none";
-
-    diaryApp.style.display = "block";
-
-    setupScreen.classList.add("hidden");
-
-    diaryApp.classList.remove("hidden");
+    showDiary();
 
 
     if (currentDiaryName) {
@@ -123,12 +149,16 @@ function openDiary() {
         welcomeText.textContent =
             `${currentDiaryName} ♡`;
 
-    } else if (currentUser) {
+    }
+
+    else if (currentUser) {
 
         welcomeText.textContent =
             `welcome, ${currentUser} ♡`;
 
-    } else {
+    }
+
+    else {
 
         welcomeText.textContent =
             "pastel diary ♡";
@@ -146,10 +176,10 @@ function openDiary() {
 
 
 /* =========================
-   START BUTTON
+   START DIARY
 ========================= */
 
-startButton.addEventListener("click", function () {
+startButton.onclick = function () {
 
     currentUser =
         userNameInput.value.trim();
@@ -159,12 +189,18 @@ startButton.addEventListener("click", function () {
 
 
     if (!currentUser) {
-        currentUser = "friend";
+
+        currentUser =
+            "friend";
+
     }
 
 
     if (!currentDiaryName) {
-        currentDiaryName = "pastel diary";
+
+        currentDiaryName =
+            "pastel diary";
+
     }
 
 
@@ -172,14 +208,14 @@ startButton.addEventListener("click", function () {
 
     openDiary();
 
-});
+};
 
 
 /* =========================
-   GUEST BUTTON
+   GUEST ENTRY
 ========================= */
 
-skipButton.addEventListener("click", function () {
+skipButton.onclick = function () {
 
     currentUser = "";
 
@@ -191,14 +227,7 @@ skipButton.addEventListener("click", function () {
 
     openDiary();
 
-});
-
-
-/* =========================
-   LOAD SAVED DATA
-========================= */
-
-loadFromStorage();
+};
 
 
 /* =========================
@@ -207,18 +236,24 @@ loadFromStorage();
 
 function getToday() {
 
-    const today = new Date();
+    const today =
+        new Date();
+
 
     const year =
         today.getFullYear();
 
+
     const month =
-        String(today.getMonth() + 1)
-        .padStart(2, "0");
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0");
+
 
     const day =
-        String(today.getDate())
-        .padStart(2, "0");
+        String(
+            today.getDate()
+        ).padStart(2, "0");
 
 
     return `${year}-${month}-${day}`;
@@ -235,7 +270,7 @@ function setTodayDate() {
 
 
 /* =========================
-   MOOD DATA
+   MOODS
 ========================= */
 
 const moodData = {
@@ -292,21 +327,25 @@ const moodData = {
 
 
 /* =========================
-   MOOD SELECTION
+   MOOD BUTTONS
 ========================= */
 
 moodButtons.forEach(function (button) {
 
-    button.addEventListener("click", function () {
+    button.onclick = function () {
 
         moodButtons.forEach(function (item) {
 
-            item.classList.remove("selected");
+            item.classList.remove(
+                "selected"
+            );
 
         });
 
 
-        button.classList.add("selected");
+        button.classList.add(
+            "selected"
+        );
 
 
         selectedMood =
@@ -324,7 +363,7 @@ moodButtons.forEach(function (button) {
         moodMessage.textContent =
             mood.message;
 
-    });
+    };
 
 });
 
@@ -333,169 +372,161 @@ moodButtons.forEach(function (button) {
    CHARACTER COUNT
 ========================= */
 
-entryContent.addEventListener(
-    "input",
-    function () {
+entryContent.oninput = function () {
 
-        const length =
-            entryContent.value.length;
+    characterCount.textContent =
+        `${entryContent.value.length} characters`;
 
-
-        characterCount.textContent =
-            `${length} characters`;
-
-    }
-);
+};
 
 
 /* =========================
    SAVE ENTRY
 ========================= */
 
-saveButton.addEventListener(
-    "click",
-    function () {
+saveButton.onclick = function () {
 
-        const date =
-            entryDate.value;
+    const date =
+        entryDate.value;
 
-        const title =
-            entryTitle.value.trim();
+    const title =
+        entryTitle.value.trim();
 
-        const content =
-            entryContent.value.trim();
+    const content =
+        entryContent.value.trim();
 
 
-        if (!date) {
+    if (!date) {
 
-            alert(
-                "Please choose a date ♡"
-            );
-
-            return;
-
-        }
-
-
-        if (!selectedMood) {
-
-            alert(
-                "Pick a mood first 🌷"
-            );
-
-            return;
-
-        }
-
-
-        if (!content) {
-
-            alert(
-                "Write a little something before saving ♡"
-            );
-
-            return;
-
-        }
-
-
-        const existingIndex =
-            diaryEntries.findIndex(
-                function (entry) {
-
-                    return entry.date === date;
-
-                }
-            );
-
-
-        const newEntry = {
-
-            id: Date.now(),
-
-            date: date,
-
-            title:
-                title || "little thoughts",
-
-            content: content,
-
-            mood: selectedMood,
-
-            createdAt:
-                new Date().toISOString()
-
-        };
-
-
-        if (existingIndex !== -1) {
-
-            diaryEntries[existingIndex] =
-                newEntry;
-
-        } else {
-
-            diaryEntries.push(
-                newEntry
-            );
-
-        }
-
-
-        diaryEntries.sort(
-            function (a, b) {
-
-                return (
-                    new Date(b.date) -
-                    new Date(a.date)
-                );
-
-            }
+        alert(
+            "Please choose a date ♡"
         );
 
-
-        saveToStorage();
-
-        updateAll();
-
-
-        reflectionText.textContent =
-            "saved ♡ your thoughts are safely tucked away in your diary.";
-
-
-        entryTitle.value = "";
-
-        entryContent.value = "";
-
-        characterCount.textContent =
-            "0 characters";
-
-
-        moodButtons.forEach(
-            function (button) {
-
-                button.classList.remove(
-                    "selected"
-                );
-
-            }
-        );
-
-
-        selectedMood = "";
-
-        currentMood.textContent =
-            "not selected";
-
-        moodMessage.textContent =
-            "how are you feeling today?";
+        return;
 
     }
-);
+
+
+    if (!selectedMood) {
+
+        alert(
+            "Pick a mood first 🌷"
+        );
+
+        return;
+
+    }
+
+
+    if (!content) {
+
+        alert(
+            "Write a little something before saving ♡"
+        );
+
+        return;
+
+    }
+
+
+    const existingIndex =
+        diaryEntries.findIndex(
+            function (entry) {
+
+                return entry.date === date;
+
+            }
+        );
+
+
+    const newEntry = {
+
+        id: Date.now(),
+
+        date: date,
+
+        title:
+            title || "little thoughts",
+
+        content: content,
+
+        mood: selectedMood,
+
+        createdAt:
+            new Date().toISOString()
+
+    };
+
+
+    if (existingIndex !== -1) {
+
+        diaryEntries[existingIndex] =
+            newEntry;
+
+    }
+
+    else {
+
+        diaryEntries.push(
+            newEntry
+        );
+
+    }
+
+
+    diaryEntries.sort(
+        function (a, b) {
+
+            return (
+                new Date(b.date) -
+                new Date(a.date)
+            );
+
+        }
+    );
+
+
+    saveToStorage();
+
+    updateAll();
+
+
+    reflectionText.textContent =
+        "saved ♡ your thoughts are safely tucked away in your diary.";
+
+
+    entryTitle.value = "";
+
+    entryContent.value = "";
+
+    characterCount.textContent =
+        "0 characters";
+
+
+    moodButtons.forEach(
+        function (button) {
+
+            button.classList.remove(
+                "selected"
+            );
+
+        }
+    );
+
+
+    selectedMood = "";
+
+    currentMood.textContent =
+        "not selected";
+
+    moodMessage.textContent =
+        "how are you feeling today?";
+
+};
 
 
 /* =========================
-   UPDATE EVERYTHING
+   UPDATE APP
 ========================= */
 
 function updateAll() {
@@ -543,15 +574,12 @@ function updateStats() {
     diaryEntries.forEach(
         function (entry) {
 
-            const entryWords =
+            words +=
                 entry.content
                     .trim()
                     .split(/\s+/)
-                    .filter(Boolean);
-
-
-            words +=
-                entryWords.length;
+                    .filter(Boolean)
+                    .length;
 
         }
     );
@@ -579,15 +607,16 @@ function updateStreak() {
     }
 
 
-    const uniqueDates =
+    const dates =
         [
             ...new Set(
-                diaryEntries
-                    .map(
-                        function (entry) {
-                            return entry.date;
-                        }
-                    )
+                diaryEntries.map(
+                    function (entry) {
+
+                        return entry.date;
+
+                    }
+                )
             )
         ].sort(
             function (a, b) {
@@ -621,8 +650,8 @@ function updateStreak() {
 
 
     if (
-        uniqueDates[0] !== today &&
-        uniqueDates[0] !== yesterday
+        dates[0] !== today &&
+        dates[0] !== yesterday
     ) {
 
         streakElement.textContent =
@@ -636,14 +665,12 @@ function updateStreak() {
     let streak = 0;
 
     let checkDate =
-        new Date(
-            uniqueDates[0]
-        );
+        new Date(dates[0]);
 
 
     for (
         let i = 0;
-        i < uniqueDates.length;
+        i < dates.length;
         i++
     ) {
 
@@ -654,9 +681,7 @@ function updateStreak() {
 
 
         if (
-            uniqueDates.includes(
-                expected
-            )
+            dates.includes(expected)
         ) {
 
             streak++;
@@ -665,7 +690,9 @@ function updateStreak() {
                 checkDate.getDate() - 1
             );
 
-        } else {
+        }
+
+        else {
 
             break;
 
@@ -681,7 +708,7 @@ function updateStreak() {
 
 
 /* =========================
-   MOOD GRAPH
+   MOOD GARDEN
 ========================= */
 
 function updateMoodGraph() {
@@ -748,7 +775,7 @@ function updateMoodGraph() {
                     : "🌷";
 
 
-            const formattedDate =
+            const date =
                 new Date(
                     entry.date
                 ).toLocaleDateString(
@@ -767,7 +794,7 @@ function updateMoodGraph() {
                 </div>
 
                 <span>
-                    ${formattedDate}
+                    ${date}
                 </span>
 
             `;
@@ -787,16 +814,13 @@ function updateMoodGraph() {
    SEARCH
 ========================= */
 
-searchInput.addEventListener(
-    "input",
-    function () {
+searchInput.oninput = function () {
 
-        displayEntries(
-            searchInput.value
-        );
+    displayEntries(
+        searchInput.value
+    );
 
-    }
-);
+};
 
 
 /* =========================
@@ -863,13 +887,11 @@ function displayEntries(
                 <span>🌸</span>
 
                 <p>
-
                     ${
                         term
                             ? "no little memory matched your search."
                             : "Your diary is waiting for its first little story."
                     }
-
                 </p>
 
             </div>
@@ -986,8 +1008,7 @@ function displayEntries(
         .forEach(
             function (button) {
 
-                button.addEventListener(
-                    "click",
+                button.onclick =
                     function () {
 
                         const id =
@@ -1012,8 +1033,7 @@ function displayEntries(
 
                         updateAll();
 
-                    }
-                );
+                    };
 
             }
         );
@@ -1046,8 +1066,7 @@ function escapeHTML(text) {
    REFLECTION
 ========================= */
 
-reflectButton.addEventListener(
-    "click",
+reflectButton.onclick =
     function () {
 
         if (
@@ -1070,7 +1089,7 @@ reflectButton.addEventListener(
             latest.content.toLowerCase();
 
 
-        let response = "";
+        let response;
 
 
         if (
@@ -1131,13 +1150,11 @@ reflectButton.addEventListener(
         reflectionText.textContent =
             response;
 
-    }
-);
+    };
 
 
 /* =========================
-   REAL-TIME WEATHER
-   OPEN-METEO API
+   WEATHER API
 ========================= */
 
 async function getWeather() {
@@ -1176,7 +1193,7 @@ async function getWeather() {
             try {
 
                 const url =
-                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto`;
+                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`;
 
 
                 const response =
@@ -1198,14 +1215,8 @@ async function getWeather() {
 
                 const temperature =
                     Math.round(
-                        data.current
-                            .temperature_2m
+                        data.current.temperature_2m
                     );
-
-
-                const weatherCode =
-                    data.current
-                        .weather_code;
 
 
                 weatherTemperature.textContent =
@@ -1214,7 +1225,7 @@ async function getWeather() {
 
                 weatherText.textContent =
                     getWeatherDescription(
-                        weatherCode
+                        data.current.weather_code
                     );
 
             }
@@ -1222,7 +1233,6 @@ async function getWeather() {
             catch (error) {
 
                 console.error(
-                    "Weather error:",
                     error
                 );
 
@@ -1265,7 +1275,6 @@ function getWeatherDescription(code) {
         return "clear sky ☀️";
     }
 
-
     if (
         code === 1 ||
         code === 2
@@ -1273,11 +1282,9 @@ function getWeatherDescription(code) {
         return "partly cloudy 🌤️";
     }
 
-
     if (code === 3) {
         return "cloudy ☁️";
     }
-
 
     if (
         code === 45 ||
@@ -1286,64 +1293,46 @@ function getWeatherDescription(code) {
         return "foggy 🌫️";
     }
 
-
     if (
-        code === 51 ||
-        code === 53 ||
-        code === 55 ||
-        code === 56 ||
-        code === 57
+        code >= 51 &&
+        code <= 57
     ) {
         return "light drizzle 🌦️";
     }
 
-
     if (
-        code === 61 ||
-        code === 63 ||
-        code === 65 ||
-        code === 66 ||
-        code === 67
+        code >= 61 &&
+        code <= 67
     ) {
         return "rainy 🌧️";
     }
 
-
     if (
-        code === 71 ||
-        code === 73 ||
-        code === 75 ||
-        code === 77
+        code >= 71 &&
+        code <= 77
     ) {
         return "snowy ❄️";
     }
 
-
     if (
-        code === 80 ||
-        code === 81 ||
-        code === 82
+        code >= 80 &&
+        code <= 82
     ) {
         return "rain showers 🌦️";
     }
 
-
     if (
-        code === 85 ||
-        code === 86
+        code >= 85 &&
+        code <= 86
     ) {
         return "snow showers 🌨️";
     }
 
-
     if (
-        code === 95 ||
-        code === 96 ||
-        code === 99
+        code >= 95
     ) {
         return "thunderstorm ⛈️";
     }
-
 
     return "today's weather";
 
@@ -1354,8 +1343,7 @@ function getWeatherDescription(code) {
    RESET
 ========================= */
 
-resetButton.addEventListener(
-    "click",
+resetButton.onclick =
     function () {
 
         const confirmed =
@@ -1391,23 +1379,6 @@ resetButton.addEventListener(
         selectedMood = "";
 
 
-        diaryApp.style.display =
-            "none";
-
-
-        setupScreen.style.display =
-            "flex";
-
-
-        diaryApp.classList.add(
-            "hidden"
-        );
-
-        setupScreen.classList.remove(
-            "hidden"
-        );
-
-
         userNameInput.value = "";
 
         diaryNameInput.value = "";
@@ -1441,23 +1412,19 @@ resetButton.addEventListener(
             }
         );
 
-    }
-);
+
+        showSetup();
+
+    };
 
 
 /* =========================
-   INITIAL SETUP
+   INITIAL LOAD
 ========================= */
+
+loadFromStorage();
 
 setTodayDate();
 
-
-/* Make sure the correct
-   screen is visible when
-   the page first loads.
-*/
-
-diaryApp.style.display = "none";
-
-setupScreen.style.display = "flex";
+showSetup();
 ```

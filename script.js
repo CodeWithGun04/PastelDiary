@@ -1,4 +1,3 @@
-```javascript
 const setupScreen = document.getElementById("setupScreen");
 const diaryApp = document.getElementById("diaryApp");
 
@@ -21,373 +20,290 @@ const characterCount = document.getElementById("characterCount");
 const currentMood = document.getElementById("currentMood");
 const moodMessage = document.getElementById("moodMessage");
 
-const streakElement = document.getElementById("streak");
-
-const weatherTemperature = document.getElementById("weatherTemperature");
-const weatherText = document.getElementById("weatherText");
-
-const reflectionText = document.getElementById("reflectionText");
-const reflectButton = document.getElementById("reflectButton");
-
 const entryCount = document.getElementById("entryCount");
 const happyCount = document.getElementById("happyCount");
 const totalCharacters = document.getElementById("totalCharacters");
 
-const moodGraph = document.getElementById("moodGraph");
+const streak = document.getElementById("streak");
 
 const entriesList = document.getElementById("entriesList");
 const searchInput = document.getElementById("searchInput");
 
-const moodButtons = document.querySelectorAll(".mood");
+const moodGraph = document.getElementById("moodGraph");
 
-let diaryEntries = [];
+const reflectionText = document.getElementById("reflectionText");
+const reflectButton = document.getElementById("reflectButton");
+
+const weatherTemperature = document.getElementById("weatherTemperature");
+const weatherText = document.getElementById("weatherText");
+
+
+/* STORAGE */
+
+const USER_NAME_KEY = "pastelDiaryUserName";
+const DIARY_NAME_KEY = "pastelDiaryName";
+const ENTRIES_KEY = "pastelDiaryEntries";
+
+
+let entries = [];
 let selectedMood = "";
-let currentUser = "";
-let currentDiaryName = "";
 
 
-/* =========================
-   SCREEN CONTROL
-========================= */
+/* BASIC SETUP */
+
+function loadEntries() {
+
+    try {
+
+        const savedEntries = localStorage.getItem(ENTRIES_KEY);
+
+        if (savedEntries) {
+            entries = JSON.parse(savedEntries);
+        } else {
+            entries = [];
+        }
+
+    } catch (error) {
+
+        console.error("Could not load entries:", error);
+
+        entries = [];
+    }
+}
+
+
+function saveEntriesToStorage() {
+
+    localStorage.setItem(
+        ENTRIES_KEY,
+        JSON.stringify(entries)
+    );
+}
+
+
+/* SHOW DIARY */
 
 function showDiary() {
+
+    const name =
+        localStorage.getItem(USER_NAME_KEY) || "";
+
+    const diaryName =
+        localStorage.getItem(DIARY_NAME_KEY) || "pastel diary";
+
 
     setupScreen.style.display = "none";
     diaryApp.style.display = "block";
 
-}
-
-
-function showSetup() {
-
-    diaryApp.style.display = "none";
-    setupScreen.style.display = "flex";
-
-}
-
-
-/* =========================
-   LOCAL STORAGE
-========================= */
-
-function saveToStorage() {
-
-    localStorage.setItem(
-        "pastelDiaryEntries",
-        JSON.stringify(diaryEntries)
-    );
-
-    localStorage.setItem(
-        "pastelDiaryUser",
-        currentUser
-    );
-
-    localStorage.setItem(
-        "pastelDiaryName",
-        currentDiaryName
-    );
-
-}
-
-
-function loadFromStorage() {
-
-    const savedEntries =
-        localStorage.getItem("pastelDiaryEntries");
-
-    const savedUser =
-        localStorage.getItem("pastelDiaryUser");
-
-    const savedDiaryName =
-        localStorage.getItem("pastelDiaryName");
-
-
-    if (savedEntries) {
-
-        try {
-
-            diaryEntries =
-                JSON.parse(savedEntries);
-
-        } catch {
-
-            diaryEntries = [];
-
-        }
-
-    }
-
-
-    if (savedUser) {
-
-        currentUser = savedUser;
-
-    }
-
-
-    if (savedDiaryName) {
-
-        currentDiaryName =
-            savedDiaryName;
-
-    }
-
-}
-
-
-/* =========================
-   OPEN DIARY
-========================= */
-
-function openDiary() {
-
-    showDiary();
-
-
-    if (currentDiaryName) {
+    if (name) {
 
         welcomeText.textContent =
-            `${currentDiaryName} ♡`;
+            `${diaryName}, ${name} ♡`;
 
-    }
-
-    else if (currentUser) {
+    } else {
 
         welcomeText.textContent =
-            `welcome, ${currentUser} ♡`;
+            diaryName;
 
     }
 
-    else {
+    setToday();
 
-        welcomeText.textContent =
-            "pastel diary ♡";
+    loadEntries();
 
-    }
-
-
-    setTodayDate();
-
-    updateAll();
+    updateEverything();
 
     getWeather();
 
 }
 
 
-/* =========================
-   START DIARY
-========================= */
+/* SHOW SETUP */
 
-startButton.onclick = function () {
+function showSetup() {
 
-    currentUser =
+    setupScreen.style.display = "flex";
+    diaryApp.style.display = "none";
+
+}
+
+
+/* START BUTTON */
+
+startButton.addEventListener("click", function () {
+
+    const name =
         userNameInput.value.trim();
 
-    currentDiaryName =
+    const diaryName =
         diaryNameInput.value.trim();
 
 
-    if (!currentUser) {
-
-        currentUser =
-            "friend";
-
-    }
+    localStorage.setItem(
+        USER_NAME_KEY,
+        name
+    );
 
 
-    if (!currentDiaryName) {
-
-        currentDiaryName =
-            "pastel diary";
-
-    }
+    localStorage.setItem(
+        DIARY_NAME_KEY,
+        diaryName || "pastel diary"
+    );
 
 
-    saveToStorage();
+    showDiary();
 
-    openDiary();
-
-};
+});
 
 
-/* =========================
-   GUEST ENTRY
-========================= */
+/* SKIP BUTTON */
 
-skipButton.onclick = function () {
+skipButton.addEventListener("click", function () {
 
-    currentUser = "";
-
-    currentDiaryName =
-        "pastel diary";
+    localStorage.setItem(
+        USER_NAME_KEY,
+        ""
+    );
 
 
-    saveToStorage();
+    localStorage.setItem(
+        DIARY_NAME_KEY,
+        "pastel diary"
+    );
 
-    openDiary();
 
-};
+    showDiary();
+
+});
 
 
-/* =========================
-   DATE
-========================= */
+/* RESET */
 
-function getToday() {
+resetButton.addEventListener("click", function () {
+
+    localStorage.removeItem(USER_NAME_KEY);
+    localStorage.removeItem(DIARY_NAME_KEY);
+
+    showSetup();
+
+});
+
+
+/* DATE */
+
+function setToday() {
 
     const today =
         new Date();
 
-
     const year =
         today.getFullYear();
 
-
     const month =
-        String(
-            today.getMonth() + 1
-        ).padStart(2, "0");
-
+        String(today.getMonth() + 1).padStart(2, "0");
 
     const day =
-        String(
-            today.getDate()
-        ).padStart(2, "0");
+        String(today.getDate()).padStart(2, "0");
 
-
-    return `${year}-${month}-${day}`;
-
-}
-
-
-function setTodayDate() {
 
     entryDate.value =
-        getToday();
+        `${year}-${month}-${day}`;
 
 }
 
 
-/* =========================
-   MOODS
-========================= */
+/* MOODS */
 
-const moodData = {
+const moodButtons =
+    document.querySelectorAll(".mood");
 
-    happy: {
-        emoji: "😊",
-        message:
-            "you seem to have a little sunshine in you today ♡"
-    },
-
-    calm: {
-        emoji: "😌",
-        message:
-            "a peaceful little moment is still worth remembering ♡"
-    },
-
-    excited: {
-        emoji: "🤭",
-        message:
-            "something has your heart doing little jumps ✨"
-    },
-
-    sad: {
-        emoji: "🥺",
-        message:
-            "it's okay to have softer days too. be gentle with yourself ♡"
-    },
-
-    angry: {
-        emoji: "😤",
-        message:
-            "whatever happened, your feelings deserve some space."
-    },
-
-    tired: {
-        emoji: "😴",
-        message:
-            "maybe today is asking you to slow down a little 🌙"
-    },
-
-    anxious: {
-        emoji: "🫠",
-        message:
-            "take things one tiny moment at a time. you don't have to solve everything today."
-    },
-
-    loved: {
-        emoji: "💗",
-        message:
-            "hold onto that warm feeling. you deserve moments like this ♡"
-    }
-
-};
-
-
-/* =========================
-   MOOD BUTTONS
-========================= */
 
 moodButtons.forEach(function (button) {
 
-    button.onclick = function () {
+    button.addEventListener("click", function () {
 
         moodButtons.forEach(function (item) {
 
-            item.classList.remove(
-                "selected"
-            );
+            item.classList.remove("selected");
 
         });
 
 
-        button.classList.add(
-            "selected"
-        );
+        button.classList.add("selected");
 
 
         selectedMood =
             button.dataset.mood;
 
 
-        const mood =
-            moodData[selectedMood];
-
-
         currentMood.textContent =
-            `${mood.emoji} ${selectedMood}`;
+            selectedMood;
 
 
         moodMessage.textContent =
-            mood.message;
+            getMoodMessage(selectedMood);
 
-    };
+    });
 
 });
 
 
-/* =========================
-   CHARACTER COUNT
-========================= */
+function getMoodMessage(mood) {
 
-entryContent.oninput = function () {
+    const messages = {
+
+        happy:
+            "you seem to be having a lovely day ♡",
+
+        calm:
+            "there's something peaceful about today",
+
+        excited:
+            "someone's got a little sparkle today ✨",
+
+        sad:
+            "it's okay to have softer days ♡",
+
+        angry:
+            "give yourself some space to breathe",
+
+        tired:
+            "maybe today is asking you to slow down",
+
+        anxious:
+            "take a breath — you don't have to solve everything right now",
+
+        loved:
+            "your heart feels a little extra full today ♡"
+
+    };
+
+
+    return (
+        messages[mood] ||
+        "how are you feeling today?"
+    );
+
+}
+
+
+/* CHARACTER COUNT */
+
+entryContent.addEventListener("input", function () {
+
+    const count =
+        entryContent.value.length;
+
 
     characterCount.textContent =
-        `${entryContent.value.length} characters`;
+        `${count} characters`;
 
-};
+});
 
 
-/* =========================
-   SAVE ENTRY
-========================= */
+/* SAVE ENTRY */
 
-saveButton.onclick = function () {
-
-    const date =
-        entryDate.value;
+saveButton.addEventListener("click", function () {
 
     const title =
         entryTitle.value.trim();
@@ -395,33 +311,14 @@ saveButton.onclick = function () {
     const content =
         entryContent.value.trim();
 
-
-    if (!date) {
-
-        alert(
-            "Please choose a date ♡"
-        );
-
-        return;
-
-    }
-
-
-    if (!selectedMood) {
-
-        alert(
-            "Pick a mood first 🌷"
-        );
-
-        return;
-
-    }
+    const date =
+        entryDate.value;
 
 
     if (!content) {
 
         alert(
-            "Write a little something before saving ♡"
+            "Write something in your diary first ♡"
         );
 
         return;
@@ -429,28 +326,22 @@ saveButton.onclick = function () {
     }
 
 
-    const existingIndex =
-        diaryEntries.findIndex(
-            function (entry) {
-
-                return entry.date === date;
-
-            }
-        );
-
-
     const newEntry = {
 
-        id: Date.now(),
-
-        date: date,
+        id:
+            Date.now(),
 
         title:
             title || "little thoughts",
 
-        content: content,
+        content:
+            content,
 
-        mood: selectedMood,
+        mood:
+            selectedMood || "not selected",
+
+        date:
+            date,
 
         createdAt:
             new Date().toISOString()
@@ -458,241 +349,153 @@ saveButton.onclick = function () {
     };
 
 
-    if (existingIndex !== -1) {
-
-        diaryEntries[existingIndex] =
-            newEntry;
-
-    }
-
-    else {
-
-        diaryEntries.push(
-            newEntry
-        );
-
-    }
+    entries.unshift(newEntry);
 
 
-    diaryEntries.sort(
-        function (a, b) {
-
-            return (
-                new Date(b.date) -
-                new Date(a.date)
-            );
-
-        }
-    );
-
-
-    saveToStorage();
-
-    updateAll();
-
-
-    reflectionText.textContent =
-        "saved ♡ your thoughts are safely tucked away in your diary.";
+    saveEntriesToStorage();
 
 
     entryTitle.value = "";
-
     entryContent.value = "";
+
+    selectedMood = "";
+
+
+    moodButtons.forEach(function (button) {
+
+        button.classList.remove("selected");
+
+    });
+
+
+    currentMood.textContent =
+        "not selected";
+
+
+    moodMessage.textContent =
+        "how are you feeling today?";
+
 
     characterCount.textContent =
         "0 characters";
 
 
-    moodButtons.forEach(
-        function (button) {
-
-            button.classList.remove(
-                "selected"
-            );
-
-        }
-    );
+    updateEverything();
 
 
-    selectedMood = "";
+    reflectionText.textContent =
+        "Your entry is saved ♡ Take a little moment to breathe and be proud of yourself for writing it down.";
 
-    currentMood.textContent =
-        "not selected";
-
-    moodMessage.textContent =
-        "how are you feeling today?";
-
-};
+});
 
 
-/* =========================
-   UPDATE APP
-========================= */
+/* UPDATE EVERYTHING */
 
-function updateAll() {
+function updateEverything() {
 
     updateStats();
 
+    updateEntries();
+
+    updateGraph();
+
     updateStreak();
-
-    updateMoodGraph();
-
-    displayEntries(
-        searchInput.value
-    );
 
 }
 
 
-/* =========================
-   STATS
-========================= */
+/* STATS */
 
 function updateStats() {
 
     entryCount.textContent =
-        diaryEntries.length;
+        entries.length;
 
 
-    const happyDays =
-        diaryEntries.filter(
-            function (entry) {
+    const happyEntries =
+        entries.filter(function (entry) {
 
-                return entry.mood === "happy";
+            return entry.mood === "happy";
 
-            }
-        ).length;
+        });
 
 
     happyCount.textContent =
-        happyDays;
+        happyEntries.length;
 
 
-    let words = 0;
+    const total =
+        entries.reduce(function (sum, entry) {
 
+            return sum + entry.content.length;
 
-    diaryEntries.forEach(
-        function (entry) {
-
-            words +=
-                entry.content
-                    .trim()
-                    .split(/\s+/)
-                    .filter(Boolean)
-                    .length;
-
-        }
-    );
+        }, 0);
 
 
     totalCharacters.textContent =
-        words;
+        total;
 
 }
 
 
-/* =========================
-   STREAK
-========================= */
+/* STREAK */
 
 function updateStreak() {
 
-    if (diaryEntries.length === 0) {
+    if (entries.length === 0) {
 
-        streakElement.textContent =
-            "0";
-
-        return;
-
-    }
-
-
-    const dates =
-        [
-            ...new Set(
-                diaryEntries.map(
-                    function (entry) {
-
-                        return entry.date;
-
-                    }
-                )
-            )
-        ].sort(
-            function (a, b) {
-
-                return (
-                    new Date(b) -
-                    new Date(a)
-                );
-
-            }
-        );
-
-
-    const today =
-        getToday();
-
-
-    const yesterdayDate =
-        new Date();
-
-
-    yesterdayDate.setDate(
-        yesterdayDate.getDate() - 1
-    );
-
-
-    const yesterday =
-        yesterdayDate
-            .toISOString()
-            .split("T")[0];
-
-
-    if (
-        dates[0] !== today &&
-        dates[0] !== yesterday
-    ) {
-
-        streakElement.textContent =
-            "0";
+        streak.textContent = "0";
 
         return;
 
     }
 
 
-    let streak = 0;
+    const uniqueDates =
+        [...new Set(
+            entries
+                .map(function (entry) {
+                    return entry.date;
+                })
+                .filter(Boolean)
+        )];
 
-    let checkDate =
-        new Date(dates[0]);
+
+    uniqueDates.sort(function (a, b) {
+
+        return new Date(b) - new Date(a);
+
+    });
+
+
+    let currentStreak = 1;
 
 
     for (
         let i = 0;
-        i < dates.length;
+        i < uniqueDates.length - 1;
         i++
     ) {
 
-        const expected =
-            checkDate
-                .toISOString()
-                .split("T")[0];
+        const current =
+            new Date(uniqueDates[i]);
+
+        const next =
+            new Date(uniqueDates[i + 1]);
 
 
-        if (
-            dates.includes(expected)
-        ) {
-
-            streak++;
-
-            checkDate.setDate(
-                checkDate.getDate() - 1
+        const difference =
+            Math.round(
+                (current - next) /
+                (1000 * 60 * 60 * 24)
             );
 
-        }
 
-        else {
+        if (difference === 1) {
+
+            currentStreak++;
+
+        } else {
 
             break;
 
@@ -701,201 +504,55 @@ function updateStreak() {
     }
 
 
-    streakElement.textContent =
-        streak;
+    streak.textContent =
+        currentStreak;
 
 }
 
 
-/* =========================
-   MOOD GARDEN
-========================= */
+/* ENTRIES */
 
-function updateMoodGraph() {
+function updateEntries() {
 
-    moodGraph.innerHTML = "";
-
-
-    if (diaryEntries.length === 0) {
-
-        moodGraph.innerHTML = `
-
-            <div class="empty-state">
-
-                <span>🌷</span>
-
-                <p>
-                    your mood garden will grow here
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const recentEntries =
-        [...diaryEntries]
-            .sort(
-                function (a, b) {
-
-                    return (
-                        new Date(a.date) -
-                        new Date(b.date)
-                    );
-
-                }
-            )
-            .slice(-7);
-
-
-    recentEntries.forEach(
-        function (entry) {
-
-            const wrapper =
-                document.createElement(
-                    "div"
-                );
-
-
-            wrapper.className =
-                "mood-point";
-
-
-            const mood =
-                moodData[entry.mood];
-
-
-            const emoji =
-                mood
-                    ? mood.emoji
-                    : "🌷";
-
-
-            const date =
-                new Date(
-                    entry.date
-                ).toLocaleDateString(
-                    "en-US",
-                    {
-                        month: "short",
-                        day: "numeric"
-                    }
-                );
-
-
-            wrapper.innerHTML = `
-
-                <div class="mood-flower">
-                    ${emoji}
-                </div>
-
-                <span>
-                    ${date}
-                </span>
-
-            `;
-
-
-            moodGraph.appendChild(
-                wrapper
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================
-   SEARCH
-========================= */
-
-searchInput.oninput = function () {
-
-    displayEntries(
+    const search =
         searchInput.value
-    );
-
-};
-
-
-/* =========================
-   DISPLAY ENTRIES
-========================= */
-
-function displayEntries(
-    searchTerm = ""
-) {
-
-    entriesList.innerHTML = "";
+            .trim()
+            .toLowerCase();
 
 
-    let filteredEntries =
-        [...diaryEntries];
+    const filteredEntries =
+        entries.filter(function (entry) {
 
+            return (
+                entry.title
+                    .toLowerCase()
+                    .includes(search) ||
 
-    const term =
-        searchTerm
-            .toLowerCase()
-            .trim();
+                entry.content
+                    .toLowerCase()
+                    .includes(search) ||
 
-
-    if (term) {
-
-        filteredEntries =
-            filteredEntries.filter(
-                function (entry) {
-
-                    return (
-
-                        entry.title
-                            .toLowerCase()
-                            .includes(term)
-
-                        ||
-
-                        entry.content
-                            .toLowerCase()
-                            .includes(term)
-
-                        ||
-
-                        entry.mood
-                            .toLowerCase()
-                            .includes(term)
-
-                    );
-
-                }
+                entry.mood
+                    .toLowerCase()
+                    .includes(search)
             );
 
-    }
+        });
 
 
-    if (
-        filteredEntries.length === 0
-    ) {
+    if (filteredEntries.length === 0) {
 
         entriesList.innerHTML = `
-
             <div class="empty-state">
-
                 <span>🌸</span>
-
                 <p>
                     ${
-                        term
-                            ? "no little memory matched your search."
+                        search
+                            ? "no little memories matched your search."
                             : "Your diary is waiting for its first little story."
                     }
                 </p>
-
             </div>
-
         `;
 
         return;
@@ -903,276 +560,261 @@ function displayEntries(
     }
 
 
-    filteredEntries.forEach(
-        function (entry) {
+    entriesList.innerHTML =
+        filteredEntries
+            .map(function (entry) {
 
-            const article =
-                document.createElement(
-                    "article"
-                );
+                return `
+                    <article class="entry">
 
+                        <div class="entry-top">
 
-            article.className =
-                "entry-item";
+                            <div>
 
+                                <div class="entry-title">
+                                    ${escapeHTML(entry.title)}
+                                </div>
 
-            const mood =
-                moodData[entry.mood];
+                                <div class="entry-date">
+                                    ${formatDate(entry.date)}
+                                </div>
 
+                            </div>
 
-            const emoji =
-                mood
-                    ? mood.emoji
-                    : "🌷";
+                            <button
+                                class="delete-entry"
+                                type="button"
+                                data-id="${entry.id}"
+                            >
+                                delete
+                            </button>
 
-
-            const formattedDate =
-                new Date(
-                    entry.date
-                ).toLocaleDateString(
-                    "en-US",
-                    {
-                        weekday: "short",
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric"
-                    }
-                );
+                        </div>
 
 
-            article.innerHTML = `
-
-                <div class="entry-top">
-
-                    <div>
-
-                        <p class="small-label">
-                            ${formattedDate}
-                        </p>
-
-                        <h3>
-                            ${escapeHTML(
-                                entry.title
-                            )}
-                        </h3>
-
-                    </div>
-
-                    <span class="entry-mood">
-                        ${emoji}
-                    </span>
-
-                </div>
+                        <div class="entry-mood">
+                            ${getMoodEmoji(entry.mood)}
+                            ${escapeHTML(entry.mood)}
+                        </div>
 
 
-                <p class="entry-content">
-                    ${escapeHTML(
-                        entry.content
-                    )}
-                </p>
+                        <div class="entry-content">
+                            ${escapeHTML(entry.content)}
+                        </div>
+
+                    </article>
+                `;
+
+            })
+            .join("");
 
 
-                <div class="entry-bottom">
-
-                    <span>
-                        ${emoji}
-                        ${escapeHTML(
-                            entry.mood
-                        )}
-                    </span>
-
-                    <button
-                        class="delete-entry"
-                        data-id="${entry.id}"
-                    >
-                        delete
-                    </button>
-
-                </div>
-
-            `;
+    const deleteButtons =
+        document.querySelectorAll(".delete-entry");
 
 
-            entriesList.appendChild(
-                article
-            );
+    deleteButtons.forEach(function (button) {
 
-        }
-    );
+        button.addEventListener(
+            "click",
+            function () {
 
-
-    document
-        .querySelectorAll(
-            ".delete-entry"
-        )
-        .forEach(
-            function (button) {
-
-                button.onclick =
-                    function () {
-
-                        const id =
-                            Number(
-                                button.dataset.id
-                            );
+                const id =
+                    Number(button.dataset.id);
 
 
-                        diaryEntries =
-                            diaryEntries.filter(
-                                function (entry) {
+                entries =
+                    entries.filter(
+                        function (entry) {
 
-                                    return (
-                                        entry.id !== id
-                                    );
+                            return entry.id !== id;
 
-                                }
-                            );
+                        }
+                    );
 
 
-                        saveToStorage();
+                saveEntriesToStorage();
 
-                        updateAll();
-
-                    };
+                updateEverything();
 
             }
         );
 
-}
-
-
-/* =========================
-   HTML SAFETY
-========================= */
-
-function escapeHTML(text) {
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.textContent =
-        text;
-
-
-    return div.innerHTML;
+    });
 
 }
 
 
-/* =========================
-   REFLECTION
-========================= */
+/* SEARCH */
 
-reflectButton.onclick =
+searchInput.addEventListener(
+    "input",
     function () {
 
-        if (
-            diaryEntries.length === 0
-        ) {
+        updateEntries();
+
+    }
+);
+
+
+/* MOOD GRAPH */
+
+function updateGraph() {
+
+    const latest =
+        entries.slice(0, 7).reverse();
+
+
+    if (latest.length === 0) {
+
+        moodGraph.innerHTML = `
+            <div class="empty-state">
+                <span>🌷</span>
+                <p>
+                    your mood garden will grow here
+                </p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const moodValues = {
+
+        happy: 100,
+        loved: 90,
+        excited: 85,
+        calm: 65,
+        tired: 45,
+        anxious: 40,
+        sad: 30,
+        angry: 25,
+        "not selected": 20
+
+    };
+
+
+    moodGraph.innerHTML =
+        latest
+            .map(function (entry) {
+
+                const value =
+                    moodValues[entry.mood] || 30;
+
+
+                return `
+                    <div class="graph-item">
+
+                        <div
+                            class="graph-bar"
+                            style="height: ${value}%"
+                            title="${escapeHTML(entry.mood)}"
+                        ></div>
+
+                        <div class="graph-label">
+                            ${getMoodEmoji(entry.mood)}
+                        </div>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+
+}
+
+
+/* REFLECTION */
+
+reflectButton.addEventListener(
+    "click",
+    function () {
+
+        const content =
+            entryContent.value.trim();
+
+
+        if (!content) {
 
             reflectionText.textContent =
-                "write your first entry and I'll look for little patterns in your thoughts ♡";
+                "Write a little something first, and I'll look for a tiny pattern in your words ♡";
 
             return;
 
         }
 
 
-        const latest =
-            diaryEntries[0];
-
-
-        const content =
-            latest.content.toLowerCase();
-
-
-        let response;
+        const lower =
+            content.toLowerCase();
 
 
         if (
-            content.includes("happy") ||
-            content.includes("excited") ||
-            content.includes("good") ||
-            content.includes("love")
+            lower.includes("happy") ||
+            lower.includes("good") ||
+            lower.includes("excited") ||
+            lower.includes("amazing")
         ) {
 
-            response =
-                "there's a little warmth in your words today. hold onto whatever made this moment feel good ♡";
+            reflectionText.textContent =
+                "There seems to be some positive energy in your words. Hold onto the little things that made today feel good ♡";
+
+            return;
 
         }
 
-        else if (
-            content.includes("sad") ||
-            content.includes("cry") ||
-            content.includes("upset") ||
-            content.includes("lonely")
+
+        if (
+            lower.includes("sad") ||
+            lower.includes("cry") ||
+            lower.includes("upset")
         ) {
 
-            response =
-                "your words feel a little heavy today. you don't have to make everything better immediately. giving yourself space is enough for now ♡";
+            reflectionText.textContent =
+                "This sounds like a softer day. You don't have to make every feeling disappear — sometimes writing it down is already enough.";
+
+            return;
 
         }
 
-        else if (
-            content.includes("stress") ||
-            content.includes("anxious") ||
-            content.includes("worried") ||
-            content.includes("pressure")
+
+        if (
+            lower.includes("stress") ||
+            lower.includes("anxious") ||
+            lower.includes("worried")
         ) {
 
-            response =
-                "it sounds like your mind has been carrying quite a lot. try focusing on just the next small thing instead of everything at once 🌷";
+            reflectionText.textContent =
+                "Your words sound a little overwhelmed. Try taking one small thing at a time and giving yourself some breathing room ♡";
 
-        }
-
-        else if (
-            content.includes("tired") ||
-            content.includes("sleep") ||
-            content.includes("exhausted")
-        ) {
-
-            response =
-                "your words sound like they could use a little softness. rest is productive too 🌙";
-
-        }
-
-        else {
-
-            response =
-                "you've given yourself a space to put your thoughts into words today. sometimes noticing what's on your mind is already a small step forward ♡";
+            return;
 
         }
 
 
         reflectionText.textContent =
-            response;
+            "You took a moment to put your thoughts into words today. That small act of checking in with yourself matters ♡";
 
-    };
+    }
+);
 
 
-/* =========================
-   WEATHER API
-========================= */
+/* WEATHER */
 
 async function getWeather() {
 
-    weatherTemperature.textContent =
-        "--°";
-
-
     weatherText.textContent =
-        "checking today's weather...";
+        "getting your weather...";
 
 
-    if (
-        !navigator.geolocation
-    ) {
+    if (!navigator.geolocation) {
+
+        weatherTemperature.textContent =
+            "--°";
 
         weatherText.textContent =
-            "weather location unavailable";
+            "weather unavailable";
 
         return;
 
@@ -1192,12 +834,10 @@ async function getWeather() {
 
             try {
 
-                const url =
-                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`;
-
-
                 const response =
-                    await fetch(url);
+                    await fetch(
+                        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weather_code&timezone=auto`
+                    );
 
 
                 if (!response.ok) {
@@ -1219,44 +859,38 @@ async function getWeather() {
                     );
 
 
+                const code =
+                    data.current.weather_code;
+
+
                 weatherTemperature.textContent =
-                    `${temperature}°C`;
+                    `${temperature}°`;
 
 
                 weatherText.textContent =
-                    getWeatherDescription(
-                        data.current.weather_code
-                    );
+                    getWeatherDescription(code);
 
-            }
+            } catch (error) {
 
-            catch (error) {
-
-                console.error(
-                    error
-                );
-
+                console.error(error);
 
                 weatherTemperature.textContent =
                     "--°";
 
-
                 weatherText.textContent =
-                    "couldn't load weather";
+                    "weather unavailable";
 
             }
 
         },
-
 
         function () {
 
             weatherTemperature.textContent =
                 "--°";
 
-
             weatherText.textContent =
-                "allow location for live weather";
+                "location permission needed";
 
         }
 
@@ -1265,166 +899,119 @@ async function getWeather() {
 }
 
 
-/* =========================
-   WEATHER DESCRIPTION
-========================= */
-
 function getWeatherDescription(code) {
 
     if (code === 0) {
-        return "clear sky ☀️";
+        return "clear skies ☀️";
     }
 
-    if (
-        code === 1 ||
-        code === 2
-    ) {
-        return "partly cloudy 🌤️";
+    if (code <= 3) {
+        return "a little cloudy ☁️";
     }
 
-    if (code === 3) {
-        return "cloudy ☁️";
+    if (code <= 48) {
+        return "misty outside 🌫️";
     }
 
-    if (
-        code === 45 ||
-        code === 48
-    ) {
-        return "foggy 🌫️";
+    if (code <= 67) {
+        return "rainy today 🌧️";
     }
 
-    if (
-        code >= 51 &&
-        code <= 57
-    ) {
-        return "light drizzle 🌦️";
+    if (code <= 77) {
+        return "snowy outside ❄️";
     }
 
-    if (
-        code >= 61 &&
-        code <= 67
-    ) {
-        return "rainy 🌧️";
+    if (code <= 82) {
+        return "showers today 🌦️";
     }
 
-    if (
-        code >= 71 &&
-        code <= 77
-    ) {
-        return "snowy ❄️";
+    if (code <= 99) {
+        return "stormy skies ⛈️";
     }
 
-    if (
-        code >= 80 &&
-        code <= 82
-    ) {
-        return "rain showers 🌦️";
-    }
-
-    if (
-        code >= 85 &&
-        code <= 86
-    ) {
-        return "snow showers 🌨️";
-    }
-
-    if (
-        code >= 95
-    ) {
-        return "thunderstorm ⛈️";
-    }
-
-    return "today's weather";
+    return "weather today";
 
 }
 
 
-/* =========================
-   RESET
-========================= */
+/* HELPERS */
 
-resetButton.onclick =
-    function () {
+function getMoodEmoji(mood) {
 
-        const confirmed =
-            confirm(
-                "Are you sure you want to start over? Your diary entries will be deleted."
-            );
+    const emojis = {
 
-
-        if (!confirmed) {
-            return;
-        }
-
-
-        localStorage.removeItem(
-            "pastelDiaryEntries"
-        );
-
-        localStorage.removeItem(
-            "pastelDiaryUser"
-        );
-
-        localStorage.removeItem(
-            "pastelDiaryName"
-        );
-
-
-        diaryEntries = [];
-
-        currentUser = "";
-
-        currentDiaryName = "";
-
-        selectedMood = "";
-
-
-        userNameInput.value = "";
-
-        diaryNameInput.value = "";
-
-        entryTitle.value = "";
-
-        entryContent.value = "";
-
-        searchInput.value = "";
-
-
-        characterCount.textContent =
-            "0 characters";
-
-
-        currentMood.textContent =
-            "not selected";
-
-
-        moodMessage.textContent =
-            "how are you feeling today?";
-
-
-        moodButtons.forEach(
-            function (button) {
-
-                button.classList.remove(
-                    "selected"
-                );
-
-            }
-        );
-
-
-        showSetup();
+        happy: "😊",
+        calm: "😌",
+        excited: "🤭",
+        sad: "🥺",
+        angry: "😤",
+        tired: "😴",
+        anxious: "🫠",
+        loved: "💗"
 
     };
 
 
-/* =========================
-   INITIAL LOAD
-========================= */
+    return emojis[mood] || "🌸";
 
-loadFromStorage();
+}
 
-setTodayDate();
 
-showSetup();
-```
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* INITIAL LOAD */
+
+loadEntries();
+
+
+const savedUser =
+    localStorage.getItem(USER_NAME_KEY);
+
+const savedDiary =
+    localStorage.getItem(DIARY_NAME_KEY);
+
+
+if (savedDiary) {
+
+    showDiary();
+
+} else {
+
+    showSetup();
+
+}
